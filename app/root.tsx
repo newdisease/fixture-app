@@ -1,5 +1,22 @@
-import type { LinksFunction } from '@remix-run/node'
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react'
+import { getHints } from '~/utils/hooks/use-hints'
+import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node'
+import type { Theme } from '~/utils/hooks/use-theme'
+
+import {
+  json,
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  useLoaderData,
+} from '@remix-run/react'
+
+import { getDomainUrl, combineHeaders } from '~/utils/misc.server'
+import { getTheme, useTheme } from '~/utils/hooks/use-theme'
+import { ClientHintCheck } from '~/components/misc/client-hints'
+import { useNonce } from '~/utils/hooks/use-nonce'
+import { GenericErrorBoundary } from '~/components/misc/error-boundary'
 
 import RootCSS from './root.css?url'
 
@@ -17,24 +34,83 @@ export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: RootCSS },
 ]
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export async function loader({ request }: LoaderFunctionArgs) {
+  return json(
+    {
+      requestInfo: {
+        hints: getHints(request),
+        origin: getDomainUrl(request),
+        path: new URL(request.url).pathname,
+        userPrefs: { theme: getTheme(request) },
+      },
+    } as const,
+    {
+      headers: combineHeaders(),
+    },
+  )
+}
+
+function Document({
+  children,
+  nonce,
+  lang = 'en',
+  dir = 'ltr',
+  theme = 'light',
+}: {
+  children: React.ReactNode
+  nonce: string
+  lang?: string
+  dir?: 'ltr' | 'rtl'
+  theme?: Theme
+}) {
   return (
-    <html lang="en">
+    <html
+      lang={lang}
+      dir={dir}
+      className={`${theme} overflow-x-hidden`}
+      style={{ colorScheme: theme }}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <ClientHintCheck nonce={nonce} />
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="h-auto w-full">
         {children}
-        <ScrollRestoration />
-        <Scripts />
+        <ScrollRestoration nonce={nonce} />
+        <Scripts nonce={nonce} />
       </body>
     </html>
   )
 }
 
-export default function App() {
-  return <Outlet />
+export default function AppWithProviders() {
+  const {} = useLoaderData<typeof loader>()
+
+  const nonce = useNonce()
+  const theme = useTheme()
+
+  return (
+    <Document nonce={nonce} theme={theme} lang="en">
+      <Outlet />
+    </Document>
+  )
+}
+
+export function ErrorBoundary() {
+  const nonce = useNonce()
+  const theme = useTheme()
+
+  return (
+    <Document nonce={nonce} theme={theme}>
+      <GenericErrorBoundary
+        statusHandlers={{
+          403: ({ error }) => (
+            <p>You are not allowed to do that: {error?.data.message}</p>
+          ),
+        }}
+      />
+    </Document>
+  )
 }

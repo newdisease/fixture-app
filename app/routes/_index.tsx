@@ -1,4 +1,5 @@
 import type { MetaFunction } from '@remix-run/node'
+import { ThemeSwitcherHome } from '~/components/misc/theme-switcher'
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Fixture' }, { name: 'description', content: 'Fixture app!' }]
@@ -13,6 +14,7 @@ export default function Index() {
             Hello World!
           </h1>
         </header>
+        <ThemeSwitcherHome />
       </div>
     </div>
   )
