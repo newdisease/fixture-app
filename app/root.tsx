@@ -1,22 +1,13 @@
-import { getHints } from '~/utils/hooks/use-hints'
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node'
-import type { Theme } from '~/utils/hooks/use-theme'
+import { json, Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react'
 
-import {
-  json,
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-  useLoaderData,
-} from '@remix-run/react'
-
-import { getDomainUrl, combineHeaders } from '~/utils/misc.server'
-import { getTheme, useTheme } from '~/utils/hooks/use-theme'
 import { ClientHintCheck } from '~/components/misc/client-hints'
-import { useNonce } from '~/utils/hooks/use-nonce'
 import { GenericErrorBoundary } from '~/components/misc/error-boundary'
+import { getHints } from '~/utils/hooks/use-hints'
+import { useNonce } from '~/utils/hooks/use-nonce'
+import { getTheme, useTheme } from '~/utils/hooks/use-theme'
+import type { Theme } from '~/utils/hooks/use-theme'
+import { getDomainUrl, combineHeaders } from '~/utils/misc.server'
 
 import RootCSS from './root.css?url'
 
@@ -86,8 +77,6 @@ function Document({
 }
 
 export default function AppWithProviders() {
-  const {} = useLoaderData<typeof loader>()
-
   const nonce = useNonce()
   const theme = useTheme()
 

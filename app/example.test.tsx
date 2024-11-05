@@ -1,9 +1,8 @@
 // This is just an example test to show that the testing environment is working.
 // TODO: Remove this file after adding some real tests.
-import { render, screen, fireEvent, cleanup } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
-
+import { render, screen, fireEvent } from '@testing-library/react'
 import React from 'react'
+import { describe, it, expect } from 'vitest'
 
 interface CounterProps {
   initialCount: number
@@ -30,7 +29,5 @@ describe('Counter component', () => {
     fireEvent.click(incrementButton)
 
     expect(screen.getByText('Count: 1')).toBeInTheDocument()
-
-    cleanup()
   })
 })

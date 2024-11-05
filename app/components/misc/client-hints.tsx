@@ -1,6 +1,7 @@
-import { useEffect } from 'react'
-import { useRevalidator } from '@remix-run/react'
 import { subscribeToSchemeChange } from '@epic-web/client-hints/color-scheme'
+import { useRevalidator } from '@remix-run/react'
+import { useEffect } from 'react'
+
 import { hintsUtils } from '~/utils/hooks/use-hints'
 
 /**

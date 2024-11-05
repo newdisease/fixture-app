@@ -1,10 +1,11 @@
-import type { Theme, ThemeExtended } from '~/utils/hooks/use-theme'
 import { useSubmit, useFetcher } from '@remix-run/react'
 import { Sun, Moon, Monitor } from 'lucide-react'
-import { useOptimisticThemeMode } from '~/utils/hooks/use-theme'
-import { cn } from '~/utils/misc'
+
 import { Select, SelectContent, SelectItem, SelectTrigger } from '~/components/ui/select'
 import { ROUTE_PATH as THEME_PATH } from '~/routes/resources.update-theme'
+import { useOptimisticThemeMode } from '~/utils/hooks/use-theme'
+import type { Theme, ThemeExtended } from '~/utils/hooks/use-theme'
+import { cn } from '~/utils/misc'
 
 export const ROUTE_PATH = '/resources/update-theme' as const
 
@@ -57,7 +58,7 @@ export function ThemeSwitcher({
             key={theme}
             value={theme}
             className={`text-sm font-medium text-primary/60 ${mode === theme && 'text-primary'}`}>
-            {theme && theme.charAt(0).toUpperCase() + theme.slice(1)}
+            {theme ? theme.charAt(0).toUpperCase() + theme.slice(1) : null}
           </SelectItem>
         ))}
       </SelectContent>

@@ -1,4 +1,5 @@
 import type { MetaFunction } from '@remix-run/node'
+
 import { ThemeSwitcherHome } from '~/components/misc/theme-switcher'
 
 export const meta: MetaFunction = () => {
