@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// · · · · · · · · · · · · · · · · · · · · 
+// User Models
+// · · · · · · · · · · · · · · · · · · · · 
+
+model User {
+  id         String     @id @default(cuid())
+  email      String     @unique
+  username   String?    @unique
+  image      UserImage?
+  customerId String?    @unique
+
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  Test      Test[]
+}
+
+model UserImage {
+  id          String  @id @default(cuid())
+  altText     String?
+  contentType String
+  blob        Bytes
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// · · · · · · · · · · · · · · · · · · · · 
+// Test Model for learning Prisma
+// · · · · · · · · · · · · · · · · · · · · 
+
+model Test {
+  id        String   @id @default(cuid())
+  test      String
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
