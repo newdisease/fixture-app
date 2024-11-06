@@ -1,6 +1,8 @@
 import type { MetaFunction } from '@remix-run/node'
+import { Form } from '@remix-run/react'
 
 import { ThemeSwitcherHome } from '~/components/misc/theme-switcher'
+import { Button } from '~/components/ui/button'
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Fixture' }, { name: 'description', content: 'Fixture app!' }]
@@ -15,6 +17,9 @@ export default function Index() {
             Hello World!
           </h1>
         </header>
+        <Form action="/google" method="post">
+          <Button>Login with Google</Button>
+        </Form>
         <ThemeSwitcherHome />
       </div>
     </div>

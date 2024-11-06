@@ -1,3 +1,11 @@
+/**
+ * HTTP.
+ */
+export const HOST_URL =
+  process.env.NODE_ENV === 'development'
+    ? process.env.DEV_HOST_URL
+    : process.env.PROD_HOST_URL
+
 export function getDomainUrl(request: Request) {
   const host = request.headers.get('X-Forwarded-Host') ?? request.headers.get('Host')
   if (!host) return null
@@ -20,4 +28,14 @@ export function combineHeaders(
     }
   }
   return combined
+}
+
+/**
+ * Singleton Server-Side Pattern.
+ */
+export const singleton = <Value>(name: string, valueFactory: () => Value): Value => {
+  const g = global as unknown as { __singletons: Record<string, unknown> }
+  g.__singletons ??= {}
+  g.__singletons[name] ??= valueFactory()
+  return g.__singletons[name] as Value
 }
