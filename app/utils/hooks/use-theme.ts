@@ -2,6 +2,7 @@ import { useFetcher } from '@remix-run/react'
 import * as cookie from 'cookie'
 import { z } from 'zod'
 
+import { MAIN_PATH } from '~/routes/_index'
 import { useHints } from '~/utils/hooks/use-hints'
 import { useRequestInfo } from '~/utils/hooks/use-request-info'
 
@@ -34,13 +35,13 @@ export function getTheme(request: Request): Theme | null {
 export function setTheme(theme: Theme | 'system') {
   if (theme === 'system') {
     return cookie.serialize(THEME_COOKIE_KEY, '', {
-      path: '/',
+      path: MAIN_PATH,
       maxAge: -1,
       sameSite: 'lax',
     })
   } else {
     return cookie.serialize(THEME_COOKIE_KEY, theme, {
-      path: '/',
+      path: MAIN_PATH,
       maxAge: 31536000,
       sameSite: 'lax',
     })

@@ -1,6 +1,5 @@
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node'
 import {
-  json,
   Links,
   Meta,
   Outlet,
@@ -19,6 +18,7 @@ import { getTheme, useTheme } from '~/utils/hooks/use-theme'
 import type { Theme } from '~/utils/hooks/use-theme'
 import { getDomainUrl, combineHeaders } from '~/utils/misc.server'
 
+import { Toaster } from './components/ui/sonner'
 import { authenticator } from './modules/auth/auth.server'
 import RootCSS from './root.css?url'
 import { csrf } from './utils/csrf.server'
@@ -55,7 +55,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const { toast, headers: toastHeaders } = await getToastSession(request)
   const [csrfToken, csrfCookieHeader] = await csrf.commitToken()
 
-  return json(
+  return Response.json(
     {
       user,
       toast,
@@ -107,6 +107,7 @@ function Document({
         {children}
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
+        <Toaster closeButton position="bottom-center" theme={theme} />
       </body>
     </html>
   )
