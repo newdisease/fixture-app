@@ -48,7 +48,7 @@ authenticator.use(
         user = await prisma.user.create({
           data: {
             email,
-            username: profile.displayName,
+            fullName: profile.displayName,
             image: imageBlob
               ? {
                   create: {

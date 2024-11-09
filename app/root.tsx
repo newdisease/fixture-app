@@ -55,26 +55,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const { toast, headers: toastHeaders } = await getToastSession(request)
   const [csrfToken, csrfCookieHeader] = await csrf.commitToken()
 
-  return Response.json(
-    {
-      user,
-      toast,
-      csrfToken,
-      honeypotProps: honeypot.getInputProps(),
-      requestInfo: {
-        hints: getHints(request),
-        origin: getDomainUrl(request),
-        path: new URL(request.url).pathname,
-        userPrefs: { theme: getTheme(request) },
-      },
-    } as const,
-    {
-      headers: combineHeaders(
-        toastHeaders,
-        csrfCookieHeader ? { 'Set-Cookie': csrfCookieHeader } : null,
-      ),
+  return {
+    user,
+    toast,
+    csrfToken,
+    honeypotProps: honeypot.getInputProps(),
+    requestInfo: {
+      hints: getHints(request),
+      origin: getDomainUrl(request),
+      path: new URL(request.url).pathname,
+      userPrefs: { theme: getTheme(request) },
     },
-  )
+    headers: combineHeaders(
+      toastHeaders,
+      csrfCookieHeader ? { 'Set-Cookie': csrfCookieHeader } : null,
+    ),
+  }
 }
 
 function Document({
