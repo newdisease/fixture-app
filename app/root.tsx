@@ -1,5 +1,15 @@
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node'
-import { json, Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react'
+import {
+  json,
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  useLoaderData,
+} from '@remix-run/react'
+import { AuthenticityTokenProvider } from 'remix-utils/csrf/react'
+import { HoneypotProvider } from 'remix-utils/honeypot/react'
 
 import { ClientHintCheck } from '~/components/misc/client-hints'
 import { GenericErrorBoundary } from '~/components/misc/error-boundary'
@@ -9,7 +19,11 @@ import { getTheme, useTheme } from '~/utils/hooks/use-theme'
 import type { Theme } from '~/utils/hooks/use-theme'
 import { getDomainUrl, combineHeaders } from '~/utils/misc.server'
 
+import { authenticator } from './modules/auth/auth.server'
 import RootCSS from './root.css?url'
+import { csrf } from './utils/csrf.server'
+import { prisma } from './utils/db.server'
+import { honeypot } from './utils/honeypot.server'
 
 export const links: LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -26,8 +40,23 @@ export const links: LinksFunction = () => [
 ]
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  const sessionUser = await authenticator.isAuthenticated(request)
+  const user = sessionUser?.id
+    ? await prisma.user.findUnique({
+        where: { id: sessionUser?.id },
+        include: {
+          image: { select: { id: true } },
+        },
+      })
+    : null
+
+  const [csrfToken, csrfCookieHeader] = await csrf.commitToken()
+
   return json(
     {
+      user,
+      csrfToken,
+      honeypotProps: honeypot.getInputProps(),
       requestInfo: {
         hints: getHints(request),
         origin: getDomainUrl(request),
@@ -36,7 +65,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
       },
     } as const,
     {
-      headers: combineHeaders(),
+      headers: combineHeaders(
+        csrfCookieHeader ? { 'Set-Cookie': csrfCookieHeader } : null,
+      ),
     },
   )
 }
@@ -77,12 +108,18 @@ function Document({
 }
 
 export default function AppWithProviders() {
+  const { csrfToken, honeypotProps } = useLoaderData<typeof loader>()
+
   const nonce = useNonce()
   const theme = useTheme()
 
   return (
     <Document nonce={nonce} theme={theme} lang="en">
-      <Outlet />
+      <AuthenticityTokenProvider token={csrfToken}>
+        <HoneypotProvider {...honeypotProps}>
+          <Outlet />
+        </HoneypotProvider>
+      </AuthenticityTokenProvider>
     </Document>
   )
 }
