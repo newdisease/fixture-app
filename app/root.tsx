@@ -24,6 +24,8 @@ import RootCSS from './root.css?url'
 import { csrf } from './utils/csrf.server'
 import { prisma } from './utils/db.server'
 import { honeypot } from './utils/honeypot.server'
+import { useToast } from './utils/hooks/use-toast'
+import { getToastSession } from './utils/toast.server'
 
 export const links: LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -50,11 +52,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
       })
     : null
 
+  const { toast, headers: toastHeaders } = await getToastSession(request)
   const [csrfToken, csrfCookieHeader] = await csrf.commitToken()
 
   return json(
     {
       user,
+      toast,
       csrfToken,
       honeypotProps: honeypot.getInputProps(),
       requestInfo: {
@@ -66,6 +70,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     } as const,
     {
       headers: combineHeaders(
+        toastHeaders,
         csrfCookieHeader ? { 'Set-Cookie': csrfCookieHeader } : null,
       ),
     },
@@ -108,10 +113,12 @@ function Document({
 }
 
 export default function AppWithProviders() {
-  const { csrfToken, honeypotProps } = useLoaderData<typeof loader>()
+  const { csrfToken, honeypotProps, toast } = useLoaderData<typeof loader>()
 
   const nonce = useNonce()
   const theme = useTheme()
+
+  useToast(toast)
 
   return (
     <Document nonce={nonce} theme={theme} lang="en">
