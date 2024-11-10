@@ -5,7 +5,7 @@
 import { Honeypot, SpamError } from 'remix-utils/honeypot/server'
 
 export const honeypot = new Honeypot({
-  encryptionSeed: process.env.HONEYPOT_ENCRYPTION_SEED,
+  encryptionSeed: process.env.HONEYPOT_ENCRYPTION_SEED || 'NOT_A_STRONG_ENCRYPTION_SEED',
 })
 
 export function checkHoneypot(formData: FormData) {
