@@ -29,6 +29,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function Index() {
   const { user } = useLoaderData<typeof loader>()
+  const displayName = user?.fullName ?? user?.email ?? 'User'
+
   return (
     <div className="flex h-screen items-center justify-center">
       <div className="flex flex-col items-center gap-16">
@@ -36,19 +38,12 @@ export default function Index() {
           <h1 className="leading text-2xl font-bold text-gray-800 dark:text-gray-100">
             {user ? (
               <div className="flex gap-3">
-                {user.image?.id ? (
-                  <Avatar>
-                    <AvatarImage
-                      src={getUserImgSrc(user.image.id)}
-                      alt={`${user.fullName} avatar`}
-                    />
-                    <AvatarFallback>
-                      {user.email.slice(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                ) : null}
+                <Avatar>
+                  <AvatarImage src={getUserImgSrc(user.image?.id)} alt={displayName} />
+                  <AvatarFallback>{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
+                </Avatar>
                 <h2 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-                  Welcome, {user.fullName ?? user.email}!
+                  Welcome, {displayName}!
                 </h2>
               </div>
             ) : (
@@ -65,7 +60,6 @@ export default function Index() {
             <Button>Login with Google</Button>
           </Form>
         )}
-
         <ThemeSwitcherHome />
       </div>
     </div>
