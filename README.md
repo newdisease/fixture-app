@@ -11,3 +11,7 @@ Run the dev server:
 ```shellscript
 npm run dev
 ```
+
+## Deployment
+
+Live demo: [fixture-app.fly.dev](https://fixture-app.fly.dev/)
