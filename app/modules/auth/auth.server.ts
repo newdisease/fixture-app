@@ -1,10 +1,8 @@
 import type { User } from '@prisma/client'
-import { redirect } from '@remix-run/node'
 import { Authenticator } from 'remix-auth'
 import { GoogleStrategy } from 'remix-auth-google'
 
 import { authSessionStorage } from '~/modules/auth/auth-session.server'
-import { LOGOUT_PATH } from '~/routes/logout'
 import { ERRORS } from '~/utils/constants/errors'
 import { prisma } from '~/utils/db.server'
 import { HOST_URL } from '~/utils/misc.server'
@@ -70,38 +68,3 @@ authenticator.use(
     },
   ),
 )
-
-/**
- * Utilities.
- */
-export async function requireSessionUser(
-  request: Request,
-  { redirectTo }: { redirectTo?: string | null } = {},
-) {
-  const sessionUser = await authenticator.isAuthenticated(request)
-  if (!sessionUser) {
-    if (!redirectTo) throw redirect(LOGOUT_PATH)
-    else throw redirect(redirectTo)
-  }
-  return sessionUser
-}
-
-export async function requireUser(
-  request: Request,
-  { redirectTo }: { redirectTo?: string | null } = {},
-) {
-  const sessionUser = await authenticator.isAuthenticated(request)
-  const user = sessionUser?.id
-    ? await prisma.user.findUnique({
-        where: { id: sessionUser?.id },
-        include: {
-          image: { select: { id: true } },
-        },
-      })
-    : null
-  if (!user) {
-    if (!redirectTo) throw redirect(LOGOUT_PATH)
-    else throw redirect(redirectTo)
-  }
-  return user
-}
