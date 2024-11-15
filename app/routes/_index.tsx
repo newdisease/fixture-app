@@ -1,63 +1,43 @@
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
-import { Form, useLoaderData } from '@remix-run/react'
+import { Form, Link, useLoaderData } from '@remix-run/react'
 
 import { ThemeSwitcherHome } from '~/components/misc/theme-switcher'
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
-import { Button } from '~/components/ui/button'
+import { Button, buttonVariants } from '~/components/ui/button'
 import { authenticator } from '~/modules/auth/auth.server'
-import { prisma } from '~/utils/db.server'
-import { getUserImgSrc } from '~/utils/misc'
+import { cn } from '~/utils/misc'
+
+import { AUTH_GOOGLE_PATH } from './auth.google'
+import { DASHBOARD_PATH } from './dashboard'
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Fixture' }, { name: 'description', content: 'Fixture app!' }]
 }
 
-export const MAIN_PATH = '/' as const
-
 export async function loader({ request }: LoaderFunctionArgs) {
   const sessionUser = await authenticator.isAuthenticated(request)
-  const user = sessionUser?.id
-    ? await prisma.user.findUnique({
-        where: { id: sessionUser?.id },
-        include: {
-          image: { select: { id: true } },
-        },
-      })
-    : null
-  return { user }
+  return { user: sessionUser }
 }
 
 export default function Index() {
   const { user } = useLoaderData<typeof loader>()
-  const displayName = user?.fullName ?? user?.email ?? 'User'
 
   return (
     <div className="flex h-screen items-center justify-center">
       <div className="flex flex-col items-center gap-16">
         <header className="flex flex-col items-center gap-9">
           <h1 className="leading text-2xl font-bold text-gray-800 dark:text-gray-100">
-            {user ? (
-              <div className="flex gap-3">
-                <Avatar>
-                  <AvatarImage src={getUserImgSrc(user.image?.id)} alt={displayName} />
-                  <AvatarFallback>{displayName.slice(0, 2).toUpperCase()}</AvatarFallback>
-                </Avatar>
-                <h2 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-                  Welcome, {displayName}!
-                </h2>
-              </div>
-            ) : (
-              'Unauthorized. Please login.'
-            )}
+            Welcome to Fixture App!
           </h1>
         </header>
         {user ? (
-          <Form action="/logout" method="post">
-            <Button>Logout</Button>
-          </Form>
+          <Link to={DASHBOARD_PATH} className={cn(buttonVariants({ size: 'sm' }), 'h-8')}>
+            Dashboard
+          </Link>
         ) : (
-          <Form action="/google" method="post">
-            <Button>Login with Google</Button>
+          <Form action={AUTH_GOOGLE_PATH} method="post">
+            <Button className={cn(buttonVariants({ size: 'sm' }), 'h-8')}>
+              Login with Google
+            </Button>
           </Form>
         )}
         <ThemeSwitcherHome />

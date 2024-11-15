@@ -5,12 +5,10 @@
 import { createCookie } from '@remix-run/node'
 import { CSRF, CSRFError } from 'remix-utils/csrf/server'
 
-import { MAIN_PATH } from '~/routes/_index'
-
 export const CSRF_COOKIE_KEY = '_csrf'
 
 const cookie = createCookie(CSRF_COOKIE_KEY, {
-  path: MAIN_PATH,
+  path: '/',
   sameSite: 'lax',
   httpOnly: true,
   secrets: [process.env.SESSION_SECRET || 'NOT_A_STRONG_SECRET'],
