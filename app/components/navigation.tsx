@@ -115,7 +115,7 @@ export function Navigation({ user }: NavigationProps) {
         <div
           className={`flex h-12 items-center border-b-2 ${isSettingsPath ? 'border-primary' : 'border-transparent'}`}>
           <Link
-            to={DASHBOARD_PATH}
+            to={SETTINGS_PATH}
             prefetch="intent"
             className={cn(
               `${buttonVariants({ variant: 'ghost', size: 'sm' })} text-primary/80`,
