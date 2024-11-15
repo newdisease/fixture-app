@@ -6,8 +6,8 @@ import { Button, buttonVariants } from '~/components/ui/button'
 import { authenticator } from '~/modules/auth/auth.server'
 import { cn } from '~/utils/misc'
 
-import { AUTH_GOOGLE_PATH } from './auth.google'
-import { DASHBOARD_PATH } from './dashboard'
+import { ROUTE_PATH as AUTH_GOOGLE_PATH } from './auth.google'
+import { ROUTE_PATH as DASHBOARD_PATH } from './dashboard'
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Fixture' }, { name: 'description', content: 'Fixture app!' }]

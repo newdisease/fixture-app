@@ -1,21 +1,20 @@
 import { useLocation } from '@remix-run/react'
 
-import { DASHBOARD_PATH } from '~/routes/dashboard'
-import { DASHBOARD_SETTINGS_PATH } from '~/routes/dashboard.settings'
+import { ROUTE_PATH as DASHBOARD_PATH } from '~/routes/dashboard'
+import { ROUTE_PATH as SETTINGS_PATH } from '~/routes/dashboard.settings'
 
 export function Header() {
   const location = useLocation()
-  const allowedLocations = [DASHBOARD_PATH, DASHBOARD_SETTINGS_PATH]
+  const allowedLocations = [DASHBOARD_PATH, SETTINGS_PATH]
 
   const headerTitle = () => {
     if (location.pathname === DASHBOARD_PATH) return 'Dashboard'
-    if (location.pathname === DASHBOARD_SETTINGS_PATH) return 'Settings'
+    if (location.pathname === SETTINGS_PATH) return 'Settings'
   }
   const headerDescription = () => {
     if (location.pathname === DASHBOARD_PATH)
       return 'Manage your Apps and view your usage.'
-    if (location.pathname === DASHBOARD_SETTINGS_PATH)
-      return 'Manage your account settings.'
+    if (location.pathname === SETTINGS_PATH) return 'Manage your account settings.'
   }
 
   if (!allowedLocations.includes(location.pathname as (typeof allowedLocations)[number]))

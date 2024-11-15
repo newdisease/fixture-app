@@ -2,7 +2,7 @@ import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/node'
 
 import { authenticator } from '~/modules/auth/auth.server'
 
-export const LOGOUT_PATH = '/auth/logout' as const
+export const ROUTE_PATH = '/auth/logout' as const
 
 export async function loader({ request }: LoaderFunctionArgs) {
   return authenticator.logout(request, { redirectTo: '/' })

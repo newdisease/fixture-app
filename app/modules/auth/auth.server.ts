@@ -4,7 +4,7 @@ import { Authenticator } from 'remix-auth'
 import { GoogleStrategy } from 'remix-auth-google'
 
 import { authSessionStorage } from '~/modules/auth/auth-session.server'
-import { LOGOUT_PATH } from '~/routes/auth.logout'
+import { ROUTE_PATH as LOGOUT_PATH } from '~/routes/auth.logout'
 import { ERRORS } from '~/utils/constants/errors'
 import { prisma } from '~/utils/db.server'
 import { HOST_URL } from '~/utils/misc.server'

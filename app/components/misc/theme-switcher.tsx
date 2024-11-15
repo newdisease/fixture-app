@@ -2,7 +2,7 @@ import { useSubmit, useFetcher } from '@remix-run/react'
 import { Sun, Moon, Monitor } from 'lucide-react'
 
 import { Select, SelectContent, SelectItem, SelectTrigger } from '~/components/ui/select'
-import { THEME_PATH } from '~/routes/resources.update-theme'
+import { ROUTE_PATH as THEME_PATH } from '~/routes/resources.update-theme'
 import { useOptimisticThemeMode } from '~/utils/hooks/use-theme'
 import type { Theme, ThemeExtended } from '~/utils/hooks/use-theme'
 import { cn } from '~/utils/misc'
