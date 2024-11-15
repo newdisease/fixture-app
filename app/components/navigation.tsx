@@ -2,9 +2,9 @@ import type { User } from '@prisma/client'
 import { Link, useLocation, useSubmit, useNavigate } from '@remix-run/react'
 import { Settings, LogOut } from 'lucide-react'
 
-import { LOGOUT_PATH } from '~/routes/auth.logout'
-import { DASHBOARD_PATH } from '~/routes/dashboard'
-import { DASHBOARD_SETTINGS_PATH } from '~/routes/dashboard.settings'
+import { ROUTE_PATH as LOGOUT_PATH } from '~/routes/auth.logout'
+import { ROUTE_PATH as DASHBOARD_PATH } from '~/routes/dashboard'
+import { ROUTE_PATH as SETTINGS_PATH } from '~/routes/dashboard.settings'
 import { useRequestInfo } from '~/utils/hooks/use-request-info'
 import { cn, getUserImgSrc } from '~/utils/misc'
 
@@ -30,7 +30,7 @@ export function Navigation({ user }: NavigationProps) {
 
   const location = useLocation()
   const isDashboardPath = location.pathname === DASHBOARD_PATH
-  const isSettingsPath = location.pathname === DASHBOARD_SETTINGS_PATH
+  const isSettingsPath = location.pathname === SETTINGS_PATH
 
   return (
     <nav className="sticky top-0 z-50 flex w-full flex-col border-b border-border bg-card px-6">
@@ -69,7 +69,7 @@ export function Navigation({ user }: NavigationProps) {
 
               <DropdownMenuItem
                 className="group h-9 w-full cursor-pointer justify-between rounded-md px-2"
-                onClick={() => navigate(DASHBOARD_SETTINGS_PATH)}>
+                onClick={() => navigate(SETTINGS_PATH)}>
                 <span className="text-sm text-primary/60 group-hover:text-primary group-focus:text-primary">
                   Settings
                 </span>
@@ -115,7 +115,7 @@ export function Navigation({ user }: NavigationProps) {
         <div
           className={`flex h-12 items-center border-b-2 ${isSettingsPath ? 'border-primary' : 'border-transparent'}`}>
           <Link
-            to={DASHBOARD_SETTINGS_PATH}
+            to={DASHBOARD_PATH}
             prefetch="intent"
             className={cn(
               `${buttonVariants({ variant: 'ghost', size: 'sm' })} text-primary/80`,

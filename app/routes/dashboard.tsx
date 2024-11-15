@@ -6,7 +6,7 @@ import { Navigation } from '~/components/navigation'
 import { requireUser } from '~/modules/auth/auth.server'
 import { siteConfig } from '~/utils/constants/brand'
 
-export const DASHBOARD_PATH = '/dashboard' as const
+export const ROUTE_PATH = '/dashboard' as const
 
 export const meta: MetaFunction = () => {
   return [{ title: `${siteConfig.siteTitle} | Dashboard` }]

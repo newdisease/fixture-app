@@ -2,7 +2,7 @@ import { redirect, ActionFunctionArgs } from '@remix-run/node'
 
 import { authenticator } from '~/modules/auth/auth.server'
 
-export const AUTH_GOOGLE_PATH = '/auth/google' as const
+export const ROUTE_PATH = '/auth/google' as const
 
 export const loader = () => redirect('/')
 
