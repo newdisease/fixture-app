@@ -1,8 +1,10 @@
 import type { User } from '@prisma/client'
+import { redirect } from '@remix-run/node'
 import { Authenticator } from 'remix-auth'
 import { GoogleStrategy } from 'remix-auth-google'
 
 import { authSessionStorage } from '~/modules/auth/auth-session.server'
+import { LOGOUT_PATH } from '~/routes/auth.logout'
 import { ERRORS } from '~/utils/constants/errors'
 import { prisma } from '~/utils/db.server'
 import { HOST_URL } from '~/utils/misc.server'
@@ -17,7 +19,7 @@ authenticator.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID || 'EXAMPLE_CLIENT',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'EXAMPLE_SECRET',
-      callbackURL: `${HOST_URL}/google/callback`,
+      callbackURL: `${HOST_URL}/auth/google/callback`,
     },
     async ({ profile }) => {
       const email = profile._json.email || profile.emails[0].value
@@ -68,3 +70,23 @@ authenticator.use(
     },
   ),
 )
+
+export async function requireUser(
+  request: Request,
+  { redirectTo }: { redirectTo?: string | null } = {},
+) {
+  const sessionUser = await authenticator.isAuthenticated(request)
+  const user = sessionUser?.id
+    ? await prisma.user.findUnique({
+        where: { id: sessionUser?.id },
+        include: {
+          image: { select: { id: true } },
+        },
+      })
+    : null
+  if (!user) {
+    if (!redirectTo) throw redirect(LOGOUT_PATH)
+    else throw redirect(redirectTo)
+  }
+  return user
+}
