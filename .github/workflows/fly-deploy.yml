@@ -77,10 +77,12 @@ jobs:
 
       - name: ⚡ Run vitest
         run: npm run test -- --coverage
+
   deploy:
     name: 🚀 Deploy
     runs-on: ubuntu-latest
     needs: [lint, typecheck, vitest]
+    if: github.event_name == 'push'
 
     steps:
       - uses: actions/checkout@v4
