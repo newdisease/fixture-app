@@ -5,13 +5,13 @@ import { buttonVariants } from '~/components/ui/button'
 import { siteConfig } from '~/utils/constants/brand'
 import { cn } from '~/utils/misc'
 
-export const ROUTE_PATH = '/dashboard/settings' as const
+export const ROUTE_PATH = '/dashboard/settings/' as const
 
 export const meta: MetaFunction = () => {
   return [{ title: `${siteConfig.siteTitle} | Settings` }]
 }
 
-export default function DashboardSettings() {
+export default function Settings() {
   const location = useLocation()
   const isSettingsPath = location.pathname === ROUTE_PATH
 
@@ -33,7 +33,6 @@ export default function DashboardSettings() {
             </span>
           </Link>
         </div>
-
         <Outlet />
       </div>
     </div>
