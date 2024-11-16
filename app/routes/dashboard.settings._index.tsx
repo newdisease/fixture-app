@@ -4,6 +4,7 @@ import { ActionFunctionArgs, LoaderFunctionArgs, redirect } from '@remix-run/nod
 import { Form, useActionData, useFetcher, useLoaderData } from '@remix-run/react'
 import { Upload } from 'lucide-react'
 import { useRef, useState } from 'react'
+import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { z } from 'zod'
 
 import { Button } from '~/components/ui/button'
@@ -17,6 +18,7 @@ import {
   ImageSchema,
 } from '~/routes/resources.upload-image'
 import { INTENTS } from '~/utils/constants/misc'
+import { validateCSRF } from '~/utils/csrf.server'
 import { prisma } from '~/utils/db.server'
 import { useDoubleCheck } from '~/utils/hooks/use-double-check'
 import { getUserImgSrc } from '~/utils/misc'
@@ -29,7 +31,6 @@ export const FullNameSchema = z.object({
     .string()
     .min(3)
     .max(32)
-    .toLowerCase()
     .trim()
     .regex(/^[a-zA-Z\s]+$/, 'Name may only contain letters and spaces.'),
 })
@@ -41,7 +42,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export async function action({ request }: ActionFunctionArgs) {
   const user = await requireUser(request)
-  const formData = await request.clone().formData()
+  const clonedRequest = request.clone()
+  const formData = await clonedRequest.formData()
+  await validateCSRF(formData, clonedRequest.headers)
   const intent = formData.get(INTENTS.INTENT)
 
   if (intent === INTENTS.USER_UPDATE_FULL_NAME) {
@@ -216,6 +219,7 @@ export default function DashboardSettings() {
               {fullName.errors.join(' ')}
             </p>
           ) : null}
+          <AuthenticityTokenInput />
         </div>
         <div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-t border-border bg-secondary px-6 dark:bg-card">
           <p className="text-sm font-normal text-primary/60">
@@ -245,6 +249,7 @@ export default function DashboardSettings() {
             This action cannot be undone, proceed with caution.
           </p>
           <Form method="POST">
+            <AuthenticityTokenInput />
             <Button
               type="submit"
               size="sm"
