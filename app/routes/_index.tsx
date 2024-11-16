@@ -9,6 +9,8 @@ import { cn } from '~/utils/misc'
 import { ROUTE_PATH as AUTH_GOOGLE_PATH } from './auth.google'
 import { ROUTE_PATH as DASHBOARD_PATH } from './dashboard'
 
+export const ROUTE_PATH = '/' as const
+
 export const meta: MetaFunction = () => {
   return [{ title: 'Fixture' }, { name: 'description', content: 'Fixture app!' }]
 }
