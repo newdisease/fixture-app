@@ -20,3 +20,12 @@ export function cn(...inputs: ClassValue[]) {
 export function getUserImgSrc(imageId?: string | null) {
   return imageId ? `/resources/user-images/${imageId}` : ''
 }
+
+/**
+ * Returns a function that calls all of its arguments.
+ */
+export function callAll<Args extends Array<unknown>>(
+  ...fns: Array<((...args: Args) => unknown) | undefined>
+) {
+  return (...args: Args) => fns.forEach((fn) => fn?.(...args))
+}
