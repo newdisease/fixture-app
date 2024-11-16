@@ -7,6 +7,7 @@ import { useRef, useState } from 'react'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { z } from 'zod'
 
+import { UserAvatar } from '~/components/misc/user-avatar'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { destroySession, getSession } from '~/modules/auth/auth-session.server'
@@ -21,7 +22,6 @@ import { INTENTS } from '~/utils/constants/misc'
 import { validateCSRF } from '~/utils/csrf.server'
 import { prisma } from '~/utils/db.server'
 import { useDoubleCheck } from '~/utils/hooks/use-double-check'
-import { getUserImgSrc } from '~/utils/misc'
 import { createToastHeaders } from '~/utils/toast.server'
 
 import { ROUTE_PATH as HOME_PATH } from './_index'
@@ -125,16 +125,8 @@ export default function DashboardSettings() {
           </div>
           <label
             htmlFor={avatarFields.imageFile.id}
-            className="group relative flex cursor-pointer overflow-hidden rounded-full transition active:scale-95">
-            {imageSrc || user.image?.id ? (
-              <img
-                src={imageSrc ?? getUserImgSrc(user.image?.id)}
-                className="h-20 w-20 rounded-full object-cover"
-                alt={user.fullName ?? user.email}
-              />
-            ) : (
-              <div className="h-20 w-20 rounded-full bg-gradient-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />
-            )}
+            className="group relative flex cursor-pointer rounded-full transition active:scale-95 sm:overflow-hidden">
+            <UserAvatar user={user} className="sm:h-20 sm:w-20" />
             <div className="absolute z-10 hidden h-full w-full items-center justify-center bg-primary/40 group-hover:flex">
               <Upload className="h-6 w-6 text-secondary" />
             </div>
