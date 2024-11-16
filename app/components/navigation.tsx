@@ -6,10 +6,11 @@ import { ROUTE_PATH as LOGOUT_PATH } from '~/routes/auth.logout'
 import { ROUTE_PATH as DASHBOARD_PATH } from '~/routes/dashboard'
 import { ROUTE_PATH as SETTINGS_PATH } from '~/routes/dashboard.settings'
 import { useRequestInfo } from '~/utils/hooks/use-request-info'
-import { cn, getUserImgSrc } from '~/utils/misc'
+import { cn } from '~/utils/misc'
 
 import { Logo } from './logo'
 import { ThemeSwitcher } from './misc/theme-switcher'
+import { UserAvatar } from './misc/user-avatar'
 import { Button, buttonVariants } from './ui/button'
 import {
   DropdownMenu,
@@ -46,15 +47,7 @@ export function Navigation({ user }: NavigationProps) {
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 rounded-full">
-                {user?.image?.id ? (
-                  <img
-                    className="min-h-8 min-w-8 rounded-full object-cover"
-                    alt={user.fullName ?? user.email}
-                    src={getUserImgSrc(user.image?.id)}
-                  />
-                ) : (
-                  <span className="min-h-8 min-w-8 rounded-full bg-gradient-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />
-                )}
+                <UserAvatar user={user} />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
