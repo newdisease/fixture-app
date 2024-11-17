@@ -70,6 +70,7 @@ export function Navigation({ user }: NavigationProps) {
               </DropdownMenuItem>
 
               <DropdownMenuItem
+                onSelect={(event) => event.preventDefault()}
                 className={cn(
                   'group flex h-9 justify-between rounded-md px-2 hover:bg-transparent',
                 )}>
