@@ -6,6 +6,7 @@ import {
   MaxPartSizeExceededError,
 } from '@remix-run/node'
 import type { ActionFunctionArgs } from '@remix-run/router'
+import sharp from 'sharp'
 import { z } from 'zod'
 
 import { requireUser } from '~/modules/auth/auth.server'
@@ -13,7 +14,8 @@ import { prisma } from '~/utils/db.server'
 import { createToastHeaders } from '~/utils/toast.server'
 
 export const ROUTE_PATH = '/resources/upload-image' as const
-export const MAX_FILE_SIZE = 1024 * 1024 * 2 // 2MB
+export const MAX_FILE_SIZE = 1024 * 1024 * 3 // 3MB
+export const MAX_THUMBNAIL_DIMENSION = 200 // Maximum width or height for the resized thumbnail.
 
 export const ImageSchema = z.object({
   imageFile: z.instanceof(File).refine((file) => file.size > 0, 'Image is required.'),
@@ -29,10 +31,31 @@ export async function action({ request }: ActionFunctionArgs) {
     )
     const submission = await parseWithZod(formData, {
       schema: ImageSchema.transform(async (data) => {
+        const arrayBuffer = await data.imageFile.arrayBuffer()
+        const buffer = Buffer.from(arrayBuffer)
+
+        const metadata = await sharp(buffer).metadata()
+
+        if (!metadata.width || !metadata.height) {
+          throw new Error('Unable to retrieve image dimensions.')
+        }
+
+        let processedImageBuffer
+
+        if (metadata.width <= metadata.height) {
+          processedImageBuffer = await sharp(buffer)
+            .resize({ width: MAX_THUMBNAIL_DIMENSION })
+            .toBuffer()
+        } else {
+          processedImageBuffer = await sharp(buffer)
+            .resize({ height: MAX_THUMBNAIL_DIMENSION })
+            .toBuffer()
+        }
+
         return {
           image: {
             contentType: data.imageFile.type,
-            blob: Buffer.from(await data.imageFile.arrayBuffer()),
+            blob: processedImageBuffer,
           },
         }
       }),
@@ -74,6 +97,9 @@ export async function action({ request }: ActionFunctionArgs) {
         },
       }
       return Response.json(result, { status: 400 })
-    } else throw error
+    } else {
+      console.error('Error processing image:', error)
+      throw error
+    }
   }
 }
