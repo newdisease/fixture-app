@@ -12,29 +12,6 @@ WORKDIR /app
 # Set production environment
 ENV NODE_ENV="production"
 
-# Install Chrome dependencies
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y \
-    chromium \
-    fonts-liberation \
-    libasound2 \
-    libatk-bridge2.0-0 \
-    libatk1.0-0 \
-    libatspi2.0-0 \
-    libcups2 \
-    libdbus-1-3 \
-    libdrm2 \
-    libgbm1 \
-    libgtk-3-0 \
-    libnspr4 \
-    libnss3 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxfixes3 \
-    libxrandr2 \
-    xdg-utils \
-    && rm -rf /var/lib/apt/lists/*
-
 # Throw-away build stage to reduce size of final image
 FROM base as build
 
@@ -69,9 +46,6 @@ RUN apt-get update -qq && \
 
 # Copy built application
 COPY --from=build /app /app
-
-# Set Chrome path
-ENV CHROME_PATH="/usr/bin/chromium"
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
