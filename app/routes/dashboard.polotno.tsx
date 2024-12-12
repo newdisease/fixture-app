@@ -30,6 +30,16 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const instance = await createInstance({
     key: 'nFA5H9elEytDyPyvKL7T',
+    timeout: 30000, // 30 seconds
+    // Disable sandboxing for better compatibility with Remix.
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--disable-gpu',
+      '--no-first-run',
+    ],
   })
 
   try {
