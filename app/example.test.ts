@@ -3,5 +3,5 @@
 import { expect, it } from 'vitest'
 
 it('should add 1 + 1', () => {
-  expect(1 + 1).toBe(2)
+	expect(1 + 1).toBe(2)
 })

@@ -6,8 +6,8 @@ import { useHints } from '~/utils/hooks/use-hints'
 import { useRequestInfo } from '~/utils/hooks/use-request-info'
 
 export const ThemeSchema = z.object({
-  theme: z.enum(['system', 'light', 'dark']),
-  redirectTo: z.string().optional(),
+	theme: z.enum(['system', 'light', 'dark']),
+	redirectTo: z.string().optional(),
 })
 
 export const THEME_COOKIE_KEY = '_theme'
@@ -18,33 +18,35 @@ export type ThemeExtended = Theme | 'system'
  * Returns a parsed Cookie theme value, or null if Cookie is not present or invalid.
  */
 export function getTheme(request: Request): Theme | null {
-  const cookieHeader = request.headers.get('Cookie')
-  const parsed = cookieHeader ? cookie.parse(cookieHeader)[THEME_COOKIE_KEY] : 'light'
+	const cookieHeader = request.headers.get('Cookie')
+	const parsed = cookieHeader
+		? cookie.parse(cookieHeader)[THEME_COOKIE_KEY]
+		: 'light'
 
-  if (parsed === 'light' || parsed === 'dark') {
-    return parsed
-  }
+	if (parsed === 'light' || parsed === 'dark') {
+		return parsed
+	}
 
-  return null
+	return null
 }
 
 /**
  * Returns a serialized Cookie string for the given theme.
  */
 export function setTheme(theme: Theme | 'system') {
-  if (theme === 'system') {
-    return cookie.serialize(THEME_COOKIE_KEY, '', {
-      path: '/',
-      maxAge: -1,
-      sameSite: 'lax',
-    })
-  } else {
-    return cookie.serialize(THEME_COOKIE_KEY, theme, {
-      path: '/',
-      maxAge: 31536000,
-      sameSite: 'lax',
-    })
-  }
+	if (theme === 'system') {
+		return cookie.serialize(THEME_COOKIE_KEY, '', {
+			path: '/',
+			maxAge: -1,
+			sameSite: 'lax',
+		})
+	} else {
+		return cookie.serialize(THEME_COOKIE_KEY, theme, {
+			path: '/',
+			maxAge: 31536000,
+			sameSite: 'lax',
+		})
+	}
 }
 
 /**
@@ -52,13 +54,13 @@ export function setTheme(theme: Theme | 'system') {
  * if the user has not set a preference.
  */
 export function useTheme() {
-  const hints = useHints()
-  const requestInfo = useRequestInfo()
-  const optimisticMode = useOptimisticThemeMode()
-  if (optimisticMode) {
-    return optimisticMode === 'system' ? hints.theme : optimisticMode
-  }
-  return requestInfo.userPrefs.theme ?? hints.theme
+	const hints = useHints()
+	const requestInfo = useRequestInfo()
+	const optimisticMode = useOptimisticThemeMode()
+	if (optimisticMode) {
+		return optimisticMode === 'system' ? hints.theme : optimisticMode
+	}
+	return requestInfo.userPrefs.theme ?? hints.theme
 }
 
 /**
@@ -66,12 +68,12 @@ export function useTheme() {
  * this will return the value it's being changed to.
  */
 export function useOptimisticThemeMode() {
-  const themeFetcher = useFetcher({ key: 'theme-fetcher' })
+	const themeFetcher = useFetcher({ key: 'theme-fetcher' })
 
-  if (themeFetcher && themeFetcher.formData) {
-    const formData = Object.fromEntries(themeFetcher.formData)
-    const { theme } = ThemeSchema.parse(formData)
+	if (themeFetcher && themeFetcher.formData) {
+		const formData = Object.fromEntries(themeFetcher.formData)
+		const { theme } = ThemeSchema.parse(formData)
 
-    return theme
-  }
+		return theme
+	}
 }

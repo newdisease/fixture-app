@@ -9,12 +9,12 @@ import { clientHint as timeZoneHint } from '@epic-web/client-hints/time-zone'
 import { useRequestInfo } from '~/utils/hooks/use-request-info'
 
 export const hintsUtils = getHintUtils({
-  theme: colorSchemeHint,
-  timeZone: timeZoneHint,
+	theme: colorSchemeHint,
+	timeZone: timeZoneHint,
 })
 export const { getHints } = hintsUtils
 
 export function useHints() {
-  const requestInfo = useRequestInfo()
-  return requestInfo.hints
+	const requestInfo = useRequestInfo()
+	return requestInfo.hints
 }

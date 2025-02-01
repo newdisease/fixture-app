@@ -5,29 +5,29 @@ import React from 'react'
 import { describe, it, expect } from 'vitest'
 
 interface CounterProps {
-  initialCount: number
+	initialCount: number
 }
 
 export function Counter({ initialCount }: CounterProps) {
-  const [count, setCount] = React.useState(initialCount)
+	const [count, setCount] = React.useState(initialCount)
 
-  return (
-    <div>
-      <p>Count: {count}</p>
-      <button onClick={() => setCount(count + 1)}>Increment</button>
-    </div>
-  )
+	return (
+		<div>
+			<p>Count: {count}</p>
+			<button onClick={() => setCount(count + 1)}>Increment</button>
+		</div>
+	)
 }
 
 describe('Counter component', () => {
-  it('renders initial count and increments when button is clicked', () => {
-    render(<Counter initialCount={0} />)
+	it('renders initial count and increments when button is clicked', () => {
+		render(<Counter initialCount={0} />)
 
-    expect(screen.getByText('Count: 0')).toBeInTheDocument()
+		expect(screen.getByText('Count: 0')).toBeInTheDocument()
 
-    const incrementButton = screen.getByRole('button', { name: 'Increment' })
-    fireEvent.click(incrementButton)
+		const incrementButton = screen.getByRole('button', { name: 'Increment' })
+		fireEvent.click(incrementButton)
 
-    expect(screen.getByText('Count: 1')).toBeInTheDocument()
-  })
+		expect(screen.getByText('Count: 1')).toBeInTheDocument()
+	})
 })

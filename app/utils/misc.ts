@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+	return twMerge(clsx(inputs))
 }
 
 /**
@@ -18,14 +18,14 @@ export function cn(...inputs: ClassValue[]) {
  * ```
  */
 export function getUserImgSrc(imageId?: string | null) {
-  return imageId ? `/resources/user-images/${imageId}` : ''
+	return imageId ? `/resources/user-images/${imageId}` : ''
 }
 
 /**
  * Returns a function that calls all of its arguments.
  */
 export function callAll<Args extends Array<unknown>>(
-  ...fns: Array<((...args: Args) => unknown) | undefined>
+	...fns: Array<((...args: Args) => unknown) | undefined>
 ) {
-  return (...args: Args) => fns.forEach((fn) => fn?.(...args))
+	return (...args: Args) => fns.forEach((fn) => fn?.(...args))
 }
