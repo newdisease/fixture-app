@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types -- shadcn/ui components  */
 import {
 	CaretSortIcon,
 	CheckIcon,
