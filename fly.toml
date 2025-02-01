@@ -22,9 +22,3 @@ primary_region = 'fra'
 [[vm]]
   size = 'shared-cpu-1x'
 
-[[http_service.checks]]
-  grace_period = "10s"
-  interval = "30s"
-  method = "GET"
-  timeout = "5s"
-  path = "/healthcheck"
