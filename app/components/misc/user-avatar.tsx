@@ -11,7 +11,7 @@ type UserAvatarProps = {
 export function UserAvatar({ user, className }: UserAvatarProps) {
 	const initials = user.fullName
 		? user.fullName.split(' ').length > 1
-			? `${user.fullName.split(' ')[0][0]}${user.fullName.split(' ')[1][0]}`
+			? `${user.fullName.split(' ')[0]?.[0] ?? ''}${user.fullName.split(' ')[1]?.[0] ?? ''}`
 			: user.fullName[0]
 		: user.email[0]
 
