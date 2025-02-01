@@ -4,7 +4,6 @@ import { Settings, LogOut } from 'lucide-react'
 
 import { ROUTE_PATH as LOGOUT_PATH } from '~/routes/auth.logout'
 import { ROUTE_PATH as DASHBOARD_PATH } from '~/routes/dashboard'
-import { ROUTE_PATH as POLOTNO_PATH } from '~/routes/dashboard.polotno'
 import { ROUTE_PATH as SETTINGS_PATH } from '~/routes/dashboard.settings'
 import { useRequestInfo } from '~/utils/hooks/use-request-info'
 import { cn } from '~/utils/misc'
@@ -33,7 +32,6 @@ export function Navigation({ user }: NavigationProps) {
   const location = useLocation()
   const isDashboardPath = location.pathname === DASHBOARD_PATH
   const isSettingsPath = location.pathname === SETTINGS_PATH
-  const isPolotnoPath = location.pathname === POLOTNO_PATH
 
   return (
     <nav className="sticky top-0 z-50 flex w-full flex-col border-b border-border bg-card px-6">
@@ -106,17 +104,6 @@ export function Navigation({ user }: NavigationProps) {
               `${buttonVariants({ variant: 'ghost', size: 'sm' })} text-primary/80`,
             )}>
             Dashboard
-          </Link>
-        </div>
-        <div
-          className={`flex h-12 items-center border-b-2 ${isPolotnoPath ? 'border-primary' : 'border-transparent'}`}>
-          <Link
-            to={POLOTNO_PATH}
-            prefetch="intent"
-            className={cn(
-              `${buttonVariants({ variant: 'ghost', size: 'sm' })} text-primary/80`,
-            )}>
-            Polotno
           </Link>
         </div>
         <div

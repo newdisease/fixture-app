@@ -1,22 +1,19 @@
 import { useLocation } from '@remix-run/react'
 
 import { ROUTE_PATH as DASHBOARD_PATH } from '~/routes/dashboard'
-import { ROUTE_PATH as POLOTNO_PATH } from '~/routes/dashboard.polotno'
 import { ROUTE_PATH as SETTINGS_PATH } from '~/routes/dashboard.settings'
 
 export function Header() {
   const location = useLocation()
-  const allowedLocations = [DASHBOARD_PATH, SETTINGS_PATH, POLOTNO_PATH]
+  const allowedLocations = [DASHBOARD_PATH, SETTINGS_PATH]
 
   const headerTitle = () => {
     if (location.pathname === DASHBOARD_PATH) return 'Dashboard'
-    if (location.pathname === POLOTNO_PATH) return 'Polotno'
     if (location.pathname === SETTINGS_PATH) return 'Settings'
   }
   const headerDescription = () => {
     if (location.pathname === DASHBOARD_PATH)
       return 'Manage your Apps and view your usage.'
-    if (location.pathname === POLOTNO_PATH) return 'Render your Polotno designs.'
     if (location.pathname === SETTINGS_PATH) return 'Manage your account settings.'
   }
 

@@ -12,23 +12,6 @@ WORKDIR /app
 # Set production environment
 ENV NODE_ENV="production"
 
-# Install Chromium and dependencies
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y \
-    chromium \
-    libnss3 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcups2 \
-    libdrm2 \
-    libxkbcommon0 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxfixes3 \
-    libxrandr2 \
-    libgbm1 \
-    libasound2 \
-    && rm -rf /var/lib/apt/lists/*
 
 # Throw-away build stage to reduce size of final image
 FROM base as build
@@ -64,10 +47,3 @@ RUN apt-get update -qq && \
 
 # Copy built application
 COPY --from=build /app /app
-
-# Set the path to the Chromium binary
-ENV CHROME_PATH="/usr/bin/chromium"
-
-# Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
-CMD [ "npm", "run", "start" ]
