@@ -1,8 +1,8 @@
 # syntax = docker/dockerfile:1
 
 # Adjust NODE_VERSION as desired
-ARG NODE_VERSION=22
-FROM node:${NODE_VERSION}-slim as base
+ARG NODE_VERSION=22.13.1
+FROM node:${NODE_VERSION}-slim AS base
 
 LABEL fly_launch_runtime="Remix/Prisma"
 
@@ -14,7 +14,7 @@ ENV NODE_ENV="production"
 
 
 # Throw-away build stage to reduce size of final image
-FROM base as build
+FROM base AS build
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
@@ -34,8 +34,6 @@ COPY . .
 # Build application
 RUN npm run build
 
-# Remove development dependencies
-RUN npm prune --omit=dev
 
 # Final stage for app image
 FROM base
@@ -47,3 +45,7 @@ RUN apt-get update -qq && \
 
 # Copy built application
 COPY --from=build /app /app
+
+# Start the server by default, this can be overwritten at runtime
+EXPOSE 3000
+CMD [ "npm", "run", "start" ]
