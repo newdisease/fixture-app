@@ -1,4 +1,4 @@
-export function Logo() {
+export function MainLogo() {
 	return (
 		<svg
 			className="text-[#363636] dark:text-white"

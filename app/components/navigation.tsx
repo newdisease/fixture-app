@@ -2,7 +2,7 @@ import { type User } from '@prisma/client'
 import { Link, useLocation, useSubmit, useNavigate } from '@remix-run/react'
 import { Settings, LogOut } from 'lucide-react'
 
-import { Logo } from './logo'
+import { MainLogo } from './main-logo'
 import { ThemeSwitcher } from './misc/theme-switcher'
 import { UserAvatar } from './misc/user-avatar'
 import { Button, buttonVariants } from './ui/button'
@@ -40,7 +40,7 @@ export function Navigation({ user }: NavigationProps) {
 					prefetch="intent"
 					className="flex h-10 items-center gap-1"
 				>
-					<Logo />
+					<MainLogo />
 				</Link>
 
 				<div className="flex h-10 items-center gap-3">
