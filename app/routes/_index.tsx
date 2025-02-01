@@ -1,13 +1,13 @@
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
-import { Form, Link, useLoaderData } from '@remix-run/react'
+import { Link, useLoaderData } from '@remix-run/react'
 
 import { ThemeSwitcherHome } from '~/components/misc/theme-switcher'
-import { Button, buttonVariants } from '~/components/ui/button'
+import { buttonVariants } from '~/components/ui/button'
 import { authenticator } from '~/modules/auth/auth.server'
 import { cn } from '~/utils/misc'
 
-import { ROUTE_PATH as AUTH_GOOGLE_PATH } from './auth.google'
 import { ROUTE_PATH as DASHBOARD_PATH } from './dashboard'
+import { ROUTE_PATH as LOGIN_PATH } from './login'
 
 export const ROUTE_PATH = '/' as const
 
@@ -36,11 +36,9 @@ export default function Index() {
             Dashboard
           </Link>
         ) : (
-          <Form action={AUTH_GOOGLE_PATH} method="post">
-            <Button className={cn(buttonVariants({ size: 'sm' }), 'h-8')}>
-              Login with Google
-            </Button>
-          </Form>
+          <Link to={LOGIN_PATH} className={cn(buttonVariants({ size: 'sm' }), 'h-8')}>
+            Login with Google
+          </Link>
         )}
         <ThemeSwitcherHome />
       </div>
