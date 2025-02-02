@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '~/utils/db.server'
 
-const prisma = new PrismaClient()
-
-async function main() {
+async function seed() {
 	try {
 		// Create two users
 		const alice = await prisma.user.create({
@@ -18,19 +16,6 @@ async function main() {
 				email: 'bob@example.com',
 				fullName: 'Bob Johnson',
 				username: 'bob',
-			},
-		})
-
-		// Create a UserImage for Alice (using a small fake buffer as image data)
-		const fakeImageBuffer = Buffer.from('FakeImageData', 'utf-8')
-		await prisma.userImage.create({
-			data: {
-				altText: 'Alice profile picture',
-				contentType: 'image/png',
-				blob: fakeImageBuffer,
-				user: {
-					connect: { id: alice.id },
-				},
 			},
 		})
 
@@ -93,9 +78,10 @@ async function main() {
 	}
 }
 
-main()
-	.catch((e) => {
+seed()
+	.catch(async (e) => {
 		console.error(e)
+		await prisma.$disconnect()
 		process.exit(1)
 	})
 	.finally(async () => {
