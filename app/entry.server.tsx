@@ -14,6 +14,13 @@ import {
 import { RemixServer } from '@remix-run/react'
 import { isbot } from 'isbot'
 import { renderToPipeableStream } from 'react-dom/server'
+import { initEnvs } from './utils/env.server'
+import { NonceProvider } from './utils/hooks/use-nonce'
+
+/**
+ * Environment Variables.
+ */
+initEnvs()
 
 const ABORT_DELAY = 5_000
 
@@ -27,18 +34,26 @@ export default function handleRequest(
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	loadContext: AppLoadContext,
 ) {
+	/**
+	 * Content Security Policy.
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+	 */
+	const nonce = String(loadContext.cspNonce) ?? undefined
+
 	return isbot(request.headers.get('user-agent') || '')
 		? handleBotRequest(
 				request,
 				responseStatusCode,
 				responseHeaders,
 				remixContext,
+				nonce,
 			)
 		: handleBrowserRequest(
 				request,
 				responseStatusCode,
 				responseHeaders,
 				remixContext,
+				nonce,
 			)
 }
 
@@ -47,15 +62,18 @@ function handleBotRequest(
 	responseStatusCode: number,
 	responseHeaders: Headers,
 	remixContext: EntryContext,
+	nonce: string,
 ) {
 	return new Promise((resolve, reject) => {
 		let shellRendered = false
 		const { pipe, abort } = renderToPipeableStream(
-			<RemixServer
-				context={remixContext}
-				url={request.url}
-				abortDelay={ABORT_DELAY}
-			/>,
+			<NonceProvider value={nonce}>
+				<RemixServer
+					context={remixContext}
+					url={request.url}
+					abortDelay={ABORT_DELAY}
+				/>
+			</NonceProvider>,
 			{
 				onAllReady() {
 					shellRendered = true
@@ -97,15 +115,18 @@ function handleBrowserRequest(
 	responseStatusCode: number,
 	responseHeaders: Headers,
 	remixContext: EntryContext,
+	nonce: string,
 ) {
 	return new Promise((resolve, reject) => {
 		let shellRendered = false
 		const { pipe, abort } = renderToPipeableStream(
-			<RemixServer
-				context={remixContext}
-				url={request.url}
-				abortDelay={ABORT_DELAY}
-			/>,
+			<NonceProvider value={nonce}>
+				<RemixServer
+					context={remixContext}
+					url={request.url}
+					abortDelay={ABORT_DELAY}
+				/>
+			</NonceProvider>,
 			{
 				onShellReady() {
 					shellRendered = true
