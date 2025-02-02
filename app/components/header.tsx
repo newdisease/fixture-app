@@ -12,8 +12,7 @@ export function Header() {
 		if (location.pathname === SETTINGS_PATH) return 'Settings'
 	}
 	const headerDescription = () => {
-		if (location.pathname === DASHBOARD_PATH)
-			return 'Manage your Apps and view your usage.'
+		if (location.pathname === DASHBOARD_PATH) return 'Your activity.'
 		if (location.pathname === SETTINGS_PATH)
 			return 'Manage your account settings.'
 	}

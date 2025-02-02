@@ -13,7 +13,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from './ui/dropdown-menu'
-import { ROUTE_PATH as LOGOUT_PATH } from '~/routes/auth.logout'
+import { ROUTE_PATH as LOGOUT_PATH } from '~/routes/_auth.logout'
 import { ROUTE_PATH as DASHBOARD_PATH } from '~/routes/dashboard'
 import { ROUTE_PATH as SETTINGS_PATH } from '~/routes/dashboard.settings'
 import { useRequestInfo } from '~/utils/hooks/use-request-info'
