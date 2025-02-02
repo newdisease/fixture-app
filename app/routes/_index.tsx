@@ -1,14 +1,11 @@
 import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
 
-import { ROUTE_PATH as DASHBOARD_PATH } from './dashboard'
 import { ROUTE_PATH as FEED_PATH } from './feed'
-import { ROUTE_PATH as LOGIN_PATH } from './login'
-import { MainLogo } from '~/components/main-logo'
 import { ThemeSwitcherHome } from '~/components/misc/theme-switcher'
-import { Button, buttonVariants } from '~/components/ui/button'
+import { Navigation } from '~/components/navigation'
+import { Button } from '~/components/ui/button'
 import { authenticator } from '~/modules/auth/auth.server'
-import { cn } from '~/utils/misc'
 
 export const ROUTE_PATH = '/' as const
 
@@ -29,23 +26,7 @@ export default function Index() {
 
 	return (
 		<div className="relative flex h-lvh w-full flex-col justify-between bg-card">
-			<nav
-				className={cn(
-					'sticky top-1.5 z-50 mx-auto flex w-full max-w-screen-lg items-center justify-between rounded-lg bg-card/20 p-6 py-3 backdrop-blur transition-all duration-300 dark:bg-secondary/20',
-				)}
-			>
-				<Link to="/" prefetch="intent" className="flex h-10 items-center gap-1">
-					<MainLogo />
-				</Link>
-				<div className="flex items-center gap-4">
-					<Link
-						to={user ? DASHBOARD_PATH : LOGIN_PATH}
-						className={cn(buttonVariants({ size: 'sm' }), 'h-8')}
-					>
-						{user ? 'Dashboard' : 'Get Started'}
-					</Link>
-				</div>
-			</nav>
+			<Navigation simple isAuth={!!user} />
 			<div className="z-10 mx-auto flex w-full max-w-screen-lg flex-col items-center justify-center gap-8 py-16">
 				<h1 className="text-center text-6xl font-extrabold leading-tight text-primary md:text-4xl lg:leading-tight">
 					Welcome to the

@@ -38,7 +38,8 @@ export default function handleRequest(
 	 * Content Security Policy.
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
 	 */
-	const nonce = String(loadContext.cspNonce) ?? undefined
+
+	const nonce = loadContext.cspNonce?.toString() ?? ''
 
 	return isbot(request.headers.get('user-agent') || '')
 		? handleBotRequest(
