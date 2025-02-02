@@ -1,7 +1,7 @@
 import { type LoaderFunctionArgs, redirect } from '@remix-run/node'
 import { Form } from '@remix-run/react'
 
-import { ROUTE_PATH as AUTH_GOOGLE_PATH } from './auth.google'
+import { ROUTE_PATH as AUTH_GOOGLE_PATH } from './_auth.google'
 import { ROUTE_PATH as DASHBOARD_PATH } from './dashboard'
 import { ThemeSwitcherHome } from '~/components/misc/theme-switcher'
 import { Button, buttonVariants } from '~/components/ui/button'
