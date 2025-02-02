@@ -6,6 +6,7 @@ import { GoogleStrategy } from 'remix-auth-google'
 import { authSessionStorage } from '~/modules/auth/auth-session.server'
 import { ROUTE_PATH as GOOGLE_CALLBACK_PATH } from '~/routes/_auth.google.callback'
 import { ROUTE_PATH as LOGOUT_PATH } from '~/routes/_auth.logout'
+import { ROUTE_PATH as SET_USERNAME_PATH } from '~/routes/set-username'
 import { ERRORS } from '~/utils/constants/errors'
 import { prisma } from '~/utils/db.server'
 import { HOST_URL } from '~/utils/misc.server'
@@ -89,5 +90,18 @@ export async function requireUser(
 		if (!redirectTo) throw redirect(LOGOUT_PATH)
 		else throw redirect(redirectTo)
 	}
+	if (!user.username) throw redirect(SET_USERNAME_PATH)
 	return user
+}
+
+export async function requireSessionUser(
+	request: Request,
+	{ redirectTo }: { redirectTo?: string | null } = {},
+) {
+	const sessionUser = await authenticator.isAuthenticated(request)
+	if (!sessionUser) {
+		if (!redirectTo) throw redirect(LOGOUT_PATH)
+		else throw redirect(redirectTo)
+	}
+	return sessionUser
 }
