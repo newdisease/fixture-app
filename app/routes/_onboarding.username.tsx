@@ -19,13 +19,14 @@ import { ROUTE_PATH as LOGIN_PATH } from './login'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { requireSessionUser } from '~/modules/auth/auth.server'
+import { siteConfig } from '~/utils/constants/brand'
 import { ERRORS } from '~/utils/constants/errors'
 import { validateCSRF } from '~/utils/csrf.server'
 import { prisma } from '~/utils/db.server'
 import { checkHoneypot } from '~/utils/honeypot.server'
 import { useIsPending } from '~/utils/hooks/use-is-pending'
 
-export const ROUTE_PATH = '/set-username' as const
+export const ROUTE_PATH = '/username' as const
 
 export const UsernameSchema = z.object({
 	username: z
@@ -41,11 +42,21 @@ export const UsernameSchema = z.object({
 })
 
 export const meta: MetaFunction = () => {
-	return [{ title: 'Fixture - Username' }]
+	return [{ title: `${siteConfig.siteTitle} | Username` }]
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-	await requireSessionUser(request, { redirectTo: LOGIN_PATH })
+	const sessionUser = await requireSessionUser(request, {
+		redirectTo: LOGIN_PATH,
+	})
+
+	const user = await prisma.user.findUnique({
+		where: { id: sessionUser?.id },
+	})
+	if (user?.username) {
+		throw redirect(DASHBOARD_PATH)
+	}
+
 	return {}
 }
 
@@ -107,27 +118,30 @@ export default function OnboardingUsername() {
 	return (
 		<div className="relative flex h-screen w-full bg-card">
 			<div className="mx-auto flex h-full w-full max-w-96 flex-col items-center justify-center gap-6">
-				<div className="flex flex-col items-center gap-2">
-					<span className="mb-2 animate-pulse select-none text-6xl">👋</span>
-					<h3 className="text-center text-2xl font-medium text-primary">
-						Welcome!
+				<div className="flex flex-col items-center gap-4">
+					<span className="mb-4 animate-bounce select-none text-7xl">🚀</span>
+					<h3 className="text-center text-3xl font-bold text-primary">
+						Welcome Aboard!
 					</h3>
-					<p className="text-center text-base font-normal text-primary/60">
-						Let&apos;s get started by choosing a username.
+					<p className="text-center text-lg font-medium text-primary/70">
+						Choose a unique username to get started.
+					</p>
+					<p className="text-center text-sm font-light text-primary/50">
+						Your username will be your unique identity on our platform.
 					</p>
 				</div>
 
 				<Form
 					method="POST"
 					autoComplete="off"
-					className="flex w-full flex-col items-start gap-1"
+					className="flex w-full flex-col items-start gap-4"
 					{...getFormProps(form)}
 				>
 					{/* Security */}
 					<AuthenticityTokenInput />
 					<HoneypotInputs />
 
-					<div className="flex w-full flex-col gap-1.5">
+					<div className="flex w-full flex-col">
 						<label htmlFor="username" className="sr-only">
 							Username
 						</label>
@@ -142,14 +156,13 @@ export default function OnboardingUsername() {
 							}`}
 							{...getInputProps(username, { type: 'text' })}
 						/>
-					</div>
-
-					<div className="flex flex-col">
-						{username.errors && (
-							<span className="mb-2 text-sm text-destructive dark:text-destructive-foreground">
-								{username.errors.join(' ')}
-							</span>
-						)}
+						<div className="h-6">
+							{username.errors && (
+								<span className="text-sm text-destructive dark:text-destructive-foreground">
+									{username.errors.join(' ')}
+								</span>
+							)}
+						</div>
 					</div>
 
 					<Button type="submit" size="sm" className="w-full">

@@ -6,13 +6,14 @@ import { ThemeSwitcherHome } from '~/components/misc/theme-switcher'
 import { Navigation } from '~/components/navigation'
 import { Button } from '~/components/ui/button'
 import { authenticator } from '~/modules/auth/auth.server'
+import { siteConfig } from '~/utils/constants/brand'
 
 export const ROUTE_PATH = '/' as const
 
 export const meta: MetaFunction = () => {
 	return [
-		{ title: 'Fixture' },
-		{ name: 'description', content: 'Fixture app!' },
+		{ title: `${siteConfig.siteTitle}` },
+		{ name: 'description', content: 'Welcome to the Fixture App.' },
 	]
 }
 
