@@ -38,10 +38,9 @@ export default function UserMenu({ user }: UserMenuProps) {
 				>
 					<DropdownMenuItem className="group flex-col items-start focus:bg-transparent">
 						<p className="text-sm font-medium text-primary/80 group-hover:text-primary group-focus:text-primary">
-							@{user.username}
+							{user.fullName}
 						</p>
-						<p className="text-sm text-primary/60">{user.fullName}</p>
-						<p className="text-sm text-primary/60">{user.email}</p>
+						<p className="text-sm text-primary/60">@{user.username}</p>
 					</DropdownMenuItem>
 					<DropdownMenuItem
 						className="group h-9 w-full cursor-pointer justify-between rounded-md px-2"

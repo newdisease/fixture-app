@@ -2,6 +2,7 @@ import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
 
 import { ROUTE_PATH as FEED_PATH } from './feed'
+import Footer from '~/components/footer'
 import { ThemeSwitcherHome } from '~/components/misc/theme-switcher'
 import { Navigation } from '~/components/navigation'
 import { Button } from '~/components/ui/button'
@@ -46,12 +47,7 @@ export default function Index() {
 					</Button>
 				</Link>
 			</div>
-			<footer className="z-10 flex w-full flex-col items-center justify-center gap-8 py-6">
-				<ThemeSwitcherHome />
-				<p className="flex items-center whitespace-nowrap text-center text-sm font-medium text-primary/60">
-					&copy; {new Date().getFullYear()} Fixture App. All rights reserved.
-				</p>
-			</footer>
+			<Footer />
 		</div>
 	)
 }

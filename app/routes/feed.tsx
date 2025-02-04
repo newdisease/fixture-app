@@ -1,7 +1,10 @@
 import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
+import Footer from '~/components/footer'
 
 import { Navigation } from '~/components/navigation'
+import { PromiseCard } from '~/components/promise-card'
+import PageContainer from '~/components/ui/page-container'
 import { authenticator } from '~/modules/auth/auth.server'
 import { siteConfig } from '~/utils/constants/brand'
 import { prisma } from '~/utils/db.server'
@@ -15,35 +18,51 @@ export const meta: MetaFunction = () => {
 export async function loader({ request }: LoaderFunctionArgs) {
 	const sessionUser = await authenticator.isAuthenticated(request)
 	let user = null
-	if (sessionUser?.id)
+
+	if (sessionUser?.id) {
 		user = await prisma.user.findUnique({
-			where: { id: sessionUser?.id },
+			where: { id: sessionUser.id },
 			include: {
 				image: { select: { id: true } },
 			},
 		})
-	const promises = await prisma.promise.findMany({ take: 10 })
-	return { user, promises }
+	}
+
+	const promises = await prisma.promise.findMany({
+		take: 10,
+		include: {
+			subscriptions: {
+				where: {
+					userId: sessionUser?.id,
+				},
+			},
+		},
+	})
+
+	const serializedPromises = promises.map((promise) => ({
+		...promise,
+		deadline: promise.deadline.toISOString(),
+		createdAt: promise.createdAt.toISOString(),
+		updatedAt: promise.updatedAt.toISOString(),
+	}))
+
+	return { user, promises: serializedPromises }
 }
 
 export default function FeedPage() {
 	const { user, promises } = useLoaderData<typeof loader>()
 	return (
-		<div className="flex min-h-[100vh] w-full flex-col bg-secondary dark:bg-black">
-			<Navigation
-				user={user ? user : undefined}
-				isAuth={!!user}
-				simple={!user}
-			/>
-			<div>
+		<PageContainer footer={<Footer />}>
+			<Navigation user={user ?? undefined} isAuth={!!user} simple={!user} />
+			<div className="mx-auto grid w-full max-w-screen-xl grid-cols-1 gap-6 p-4 sm:grid-cols-2 lg:grid-cols-3">
 				{promises.map((promise) => (
-					<div key={promise.id} className="mt-4 border border-gray-200 p-4">
-						<h2 className="text-xl font-bold">{promise.title}</h2>
-						<p className="text-gray-700">{promise.description}</p>
-						<p className="text-gray-500">{promise.deadline.toString()}</p>
-					</div>
+					<PromiseCard
+						key={promise.id}
+						promise={promise}
+						onComplete={() => {}}
+					/>
 				))}
 			</div>
-		</div>
+		</PageContainer>
 	)
 }
