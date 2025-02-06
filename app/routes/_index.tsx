@@ -3,7 +3,6 @@ import { Link, useLoaderData } from '@remix-run/react'
 
 import { ROUTE_PATH as FEED_PATH } from './feed'
 import Footer from '~/components/footer'
-import { ThemeSwitcherHome } from '~/components/misc/theme-switcher'
 import { Navigation } from '~/components/navigation'
 import { Button } from '~/components/ui/button'
 import { authenticator } from '~/modules/auth/auth.server'
@@ -38,14 +37,19 @@ export default function Index() {
 					</span>
 				</h1>
 
-				<Link to={FEED_PATH} tabIndex={-1} className="text-center outline-none">
-					<Button
-						variant="default"
-						className="group h-12 w-48 transform bg-gradient-to-r from-green-400 to-blue-500 text-lg font-semibold text-white shadow-lg transition-transform duration-300 hover:scale-105 hover:from-green-500 hover:to-blue-600 dark:from-green-400 dark:to-blue-500 dark:hover:from-green-500 dark:hover:to-blue-600"
+				<Button
+					asChild
+					variant="default"
+					className="group h-12 w-48 transform bg-gradient-to-r from-green-400 to-blue-500 text-lg font-semibold text-white shadow-lg transition-transform duration-300 hover:scale-105 hover:from-green-500 hover:to-blue-600 dark:from-green-400 dark:to-blue-500 dark:hover:from-green-500 dark:hover:to-blue-600"
+				>
+					<Link
+						to={FEED_PATH}
+						tabIndex={-1}
+						className="text-center outline-none"
 					>
 						Show feed
-					</Button>
-				</Link>
+					</Link>
+				</Button>
 			</div>
 			<Footer />
 		</div>
