@@ -20,7 +20,7 @@ async function seed() {
 		})
 
 		// Create a Promise for Alice
-		const promiseAlice = await prisma.promise.create({
+		const promiseAlice = await prisma.task.create({
 			data: {
 				title: 'Learn Remix',
 				description:
@@ -34,7 +34,7 @@ async function seed() {
 		})
 
 		// Create a Promise for Bob
-		const promiseBob = await prisma.promise.create({
+		const promiseBob = await prisma.task.create({
 			data: {
 				title: 'Write a Blog Post',
 				description: 'Write a blog post about Prisma and Remix integration.',
@@ -50,7 +50,7 @@ async function seed() {
 		// Bob subscribes to Alice's promise
 		await prisma.subscription.create({
 			data: {
-				promise: {
+				task: {
 					connect: { id: promiseAlice.id },
 				},
 				user: {
@@ -62,7 +62,7 @@ async function seed() {
 		// Alice subscribes to Bob's promise
 		await prisma.subscription.create({
 			data: {
-				promise: {
+				task: {
 					connect: { id: promiseBob.id },
 				},
 				user: {

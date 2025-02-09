@@ -3,7 +3,7 @@ import { useLoaderData } from '@remix-run/react'
 import Footer from '~/components/footer'
 
 import { Navigation } from '~/components/navigation'
-import { PromiseCard } from '~/components/promise-card'
+import { TaskCard } from '~/components/task-card'
 import PageContainer from '~/components/ui/page-container'
 import { authenticator } from '~/modules/auth/auth.server'
 import { siteConfig } from '~/utils/constants/brand'
@@ -28,7 +28,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		})
 	}
 
-	const promises = await prisma.promise.findMany({
+	const tasks = await prisma.task.findMany({
 		take: 10,
 		include: {
 			subscriptions: {
@@ -36,31 +36,25 @@ export async function loader({ request }: LoaderFunctionArgs) {
 					userId: sessionUser?.id,
 				},
 			},
+			creator: {
+				select: {
+					fullName: true,
+				},
+			},
 		},
 	})
 
-	const serializedPromises = promises.map((promise) => ({
-		...promise,
-		deadline: promise.deadline.toISOString(),
-		createdAt: promise.createdAt.toISOString(),
-		updatedAt: promise.updatedAt.toISOString(),
-	}))
-
-	return { user, promises: serializedPromises }
+	return { user, tasks }
 }
 
 export default function FeedPage() {
-	const { user, promises } = useLoaderData<typeof loader>()
+	const { user, tasks } = useLoaderData<typeof loader>()
 	return (
 		<PageContainer footer={<Footer />}>
 			<Navigation user={user ?? undefined} isAuth={!!user} simple={!user} />
 			<div className="mx-auto grid w-full max-w-screen-xl grid-cols-1 gap-6 p-4 sm:grid-cols-2 lg:grid-cols-3">
-				{promises.map((promise) => (
-					<PromiseCard
-						key={promise.id}
-						promise={promise}
-						onComplete={() => {}}
-					/>
+				{tasks.map((task) => (
+					<TaskCard key={task.id} task={task} onComplete={() => {}} />
 				))}
 			</div>
 		</PageContainer>
