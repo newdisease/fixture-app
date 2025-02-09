@@ -21,7 +21,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  promises      Promise[]
+  tasks         Task[]
   subscriptions Subscription[]
 }
 
@@ -39,10 +39,10 @@ model UserImage {
 }
 
 // · · · · · · · · · · · · · · · · · · · · 
-// Promise Models
+// Task Models
 // · · · · · · · · · · · · · · · · · · · · 
 
-model Promise {
+model Task {
   id          String   @id @default(cuid())
   title       String
   description String
@@ -65,8 +65,8 @@ model Subscription {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  promise   Promise @relation(fields: [promiseId], references: [id])
-  promiseId String
+  task   Task   @relation(fields: [taskId], references: [id])
+  taskId String
 
   user   User   @relation(fields: [userId], references: [id])
   userId String
