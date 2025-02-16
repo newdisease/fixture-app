@@ -14,6 +14,7 @@ import {
 import { Upload } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
+import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 
 import { ROUTE_PATH as HOME_PATH } from './_index'
@@ -225,6 +226,7 @@ export default function DashboardSettings() {
 						</p>
 					) : null}
 					<AuthenticityTokenInput />
+					<HoneypotInputs />
 				</div>
 				<div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-t border-border bg-secondary px-6 dark:bg-card">
 					<p className="text-sm font-normal text-primary/60">
@@ -255,6 +257,7 @@ export default function DashboardSettings() {
 					</p>
 					<Form method="POST">
 						<AuthenticityTokenInput />
+						<HoneypotInputs />
 						<Button
 							type="submit"
 							size="sm"

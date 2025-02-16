@@ -2,6 +2,7 @@ import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
 import { Outlet, useLoaderData } from '@remix-run/react'
 
 import { ROUTE_PATH as DASHBOARD_PATH } from './dashboard'
+import { ROUTE_PATH as NEW_TASK_PATH } from './dashboard.add-new'
 import { ROUTE_PATH as SETTINGS_PATH } from './dashboard.settings'
 import Footer from '~/components/footer'
 import { Header } from '~/components/header'
@@ -18,6 +19,12 @@ const dashboardItems = [
 		path: DASHBOARD_PATH,
 		label: 'Dashboard',
 		description: 'Your activity.',
+	},
+	{
+		path: NEW_TASK_PATH,
+		label: 'New Promise',
+		description:
+			'Create a new promise with a title, description, and deadline.',
 	},
 	{
 		path: SETTINGS_PATH,
