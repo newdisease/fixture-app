@@ -4,6 +4,7 @@ import { Authenticator } from 'remix-auth'
 import { GoogleStrategy } from 'remix-auth-google'
 
 import { TOTPStrategy } from 'remix-auth-totp'
+import { sendAuthEmail } from '../email/templates/auth-email'
 import { authSessionStorage } from '~/modules/auth/auth-session.server'
 import { ROUTE_PATH as GOOGLE_CALLBACK_PATH } from '~/routes/_auth.google.callback'
 import { ROUTE_PATH as LOGOUT_PATH } from '~/routes/_auth.logout'
@@ -87,10 +88,8 @@ authenticator.use(
 				if (process.env.NODE_ENV === 'development') {
 					// Development Only: Log the TOTP code.
 					console.log('[ Dev-Only ] TOTP Code:', code)
-					console.log('[ Dev-Only ] Magic Link:', magicLink)
-					console.log('[ Dev-Only ] Email:', email)
 				}
-				// await sendAuthEmail({ email, code, magicLink })
+				await sendAuthEmail({ email, code, magicLink })
 			},
 		},
 		async ({ email }) => {
