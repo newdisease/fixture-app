@@ -3,9 +3,11 @@ import { redirect } from '@remix-run/node'
 import { Authenticator } from 'remix-auth'
 import { GoogleStrategy } from 'remix-auth-google'
 
+import { TOTPStrategy } from 'remix-auth-totp'
 import { authSessionStorage } from '~/modules/auth/auth-session.server'
 import { ROUTE_PATH as GOOGLE_CALLBACK_PATH } from '~/routes/_auth.google.callback'
 import { ROUTE_PATH as LOGOUT_PATH } from '~/routes/_auth.logout'
+import { ROUTE_PATH as MAGIC_LINK_PATH } from '~/routes/_auth.magic-link'
 import { ROUTE_PATH as SET_USERNAME_PATH } from '~/routes/_onboarding.username'
 import { ERRORS } from '~/utils/constants/errors'
 import { prisma } from '~/utils/db.server'
@@ -19,8 +21,8 @@ export const authenticator = new Authenticator<User>(authSessionStorage)
 authenticator.use(
 	new GoogleStrategy(
 		{
-			clientID: process.env.GOOGLE_CLIENT_ID || 'EXAMPLE_CLIENT',
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'EXAMPLE_SECRET',
+			clientID: process.env.GOOGLE_CLIENT_ID,
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 			callbackURL: `${HOST_URL}${GOOGLE_CALLBACK_PATH}`,
 		},
 		async ({ profile }) => {
@@ -60,6 +62,49 @@ authenticator.use(
 									},
 								}
 							: undefined,
+					},
+					include: {
+						image: { select: { id: true } },
+					},
+				})
+				if (!user) throw new Error(ERRORS.AUTH_USER_NOT_CREATED)
+			}
+
+			return user
+		},
+	),
+)
+
+/**
+ * TOTP - Strategy.
+ */
+authenticator.use(
+	new TOTPStrategy(
+		{
+			secret: process.env.ENCRYPTION_SECRET,
+			magicLinkPath: MAGIC_LINK_PATH,
+			sendTOTP: async ({ email, code, magicLink }) => {
+				if (process.env.NODE_ENV === 'development') {
+					// Development Only: Log the TOTP code.
+					console.log('[ Dev-Only ] TOTP Code:', code)
+					console.log('[ Dev-Only ] Magic Link:', magicLink)
+					console.log('[ Dev-Only ] Email:', email)
+				}
+				// await sendAuthEmail({ email, code, magicLink })
+			},
+		},
+		async ({ email }) => {
+			let user = await prisma.user.findUnique({
+				where: { email },
+				include: {
+					image: { select: { id: true } },
+				},
+			})
+
+			if (!user) {
+				user = await prisma.user.create({
+					data: {
+						email,
 					},
 					include: {
 						image: { select: { id: true } },

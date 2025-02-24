@@ -18,6 +18,7 @@ import { ROUTE_PATH as FEED_PATH } from './feed'
 import { Button } from '~/components/ui/button'
 import { DateTimePicker } from '~/components/ui/datetime-picker'
 import { Input } from '~/components/ui/input'
+import { PageContainer } from '~/components/ui/page-container'
 import { Textarea } from '~/components/ui/textarea'
 
 import { requireUser } from '~/modules/auth/auth.server'
@@ -98,68 +99,70 @@ export default function NewTaskPage() {
 	}
 
 	return (
-		<div className="mx-auto p-9">
-			<Form
-				method="POST"
-				className="flex flex-col items-start rounded-lg border border-border bg-card"
-				{...getFormProps(form)}
-			>
-				<div className="flex w-full flex-col gap-4 rounded-lg p-6">
-					<Input
-						placeholder="Title"
-						autoComplete="off"
-						required
-						className={`w-80 bg-transparent ${
-							title.errors &&
-							'border-destructive focus-visible:ring-destructive'
-						}`}
-						{...getInputProps(title, { type: 'text' })}
-					/>
-					{title.errors && (
-						<p className="text-sm text-destructive dark:text-destructive-foreground">
-							{title.errors.join(' ')}
-						</p>
-					)}
-				</div>
-				<div className="flex w-full flex-col gap-4 rounded-lg p-6">
-					<Textarea
-						placeholder="Description"
-						autoComplete="off"
-						required
-						className={`w-80 bg-transparent ${
-							description.errors &&
-							'border-destructive focus-visible:ring-destructive'
-						}`}
-						{...getInputProps(description, { type: 'text' })}
-					/>
-					{description.errors && (
-						<p className="text-sm text-destructive dark:text-destructive-foreground">
-							{description.errors.join(' ')}
-						</p>
-					)}
-				</div>
-				<div className="flex max-w-lg flex-col gap-4 rounded-lg p-6">
-					<p className="text-sm font-normal text-primary/60">Deadline</p>
-					<DateTimePicker onDateChange={handleDateChange} />
-					{deadline.errors && (
-						<p className="text-sm text-destructive dark:text-destructive-foreground">
-							{deadline.errors.join(' ')}
-						</p>
-					)}
-				</div>
-				<AuthenticityTokenInput />
-				<HoneypotInputs />
-				<div className="flex w-full justify-start p-6">
-					<Button
-						type="submit"
-						size="sm"
-						name={INTENTS.INTENT}
-						value={INTENTS.ADD_NEW_TASK}
-					>
-						Add Task
-					</Button>
-				</div>
-			</Form>
-		</div>
+		<PageContainer>
+			<div className="mx-auto p-9">
+				<Form
+					method="POST"
+					className="flex flex-col items-start rounded-lg border border-border bg-card"
+					{...getFormProps(form)}
+				>
+					<div className="flex w-full flex-col gap-4 rounded-lg p-6">
+						<Input
+							placeholder="Title"
+							autoComplete="off"
+							required
+							className={`w-80 bg-transparent ${
+								title.errors &&
+								'border-destructive focus-visible:ring-destructive'
+							}`}
+							{...getInputProps(title, { type: 'text' })}
+						/>
+						{title.errors && (
+							<p className="text-sm text-destructive dark:text-destructive-foreground">
+								{title.errors.join(' ')}
+							</p>
+						)}
+					</div>
+					<div className="flex w-full flex-col gap-4 rounded-lg p-6">
+						<Textarea
+							placeholder="Description"
+							autoComplete="off"
+							required
+							className={`w-80 bg-transparent ${
+								description.errors &&
+								'border-destructive focus-visible:ring-destructive'
+							}`}
+							{...getInputProps(description, { type: 'text' })}
+						/>
+						{description.errors && (
+							<p className="text-sm text-destructive dark:text-destructive-foreground">
+								{description.errors.join(' ')}
+							</p>
+						)}
+					</div>
+					<div className="flex max-w-lg flex-col gap-4 rounded-lg p-6">
+						<p className="text-sm font-normal text-primary/60">Deadline</p>
+						<DateTimePicker onDateChange={handleDateChange} />
+						{deadline.errors && (
+							<p className="text-sm text-destructive dark:text-destructive-foreground">
+								{deadline.errors.join(' ')}
+							</p>
+						)}
+					</div>
+					<AuthenticityTokenInput />
+					<HoneypotInputs />
+					<div className="flex w-full justify-start p-6">
+						<Button
+							type="submit"
+							size="sm"
+							name={INTENTS.INTENT}
+							value={INTENTS.ADD_NEW_TASK}
+						>
+							Add Task
+						</Button>
+					</div>
+				</Form>
+			</div>
+		</PageContainer>
 	)
 }

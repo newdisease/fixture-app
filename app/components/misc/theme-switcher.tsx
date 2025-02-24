@@ -75,12 +75,20 @@ export function ThemeSwitcher({
 	)
 }
 
-export function ThemeSwitcherHome() {
+type ThemeSwitcherHomeProps = {
+	className?: string
+}
+
+export function ThemeSwitcherHome({ className }: ThemeSwitcherHomeProps) {
 	const fetcher = useFetcher({ key: 'theme-fetcher' })
 	const themes: ThemeExtended[] = ['light', 'dark', 'system']
 
 	return (
-		<fetcher.Form method="POST" action={THEME_PATH} className="flex gap-3">
+		<fetcher.Form
+			method="POST"
+			action={THEME_PATH}
+			className={cn('flex gap-3', className)}
+		>
 			{themes.map((theme) => (
 				<button key={theme} type="submit" name="theme" value={theme}>
 					{theme === 'light' ? (
