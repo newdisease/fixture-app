@@ -4,9 +4,9 @@ import { type PropsWithChildren } from 'react'
 import { MainLogo } from './misc/main-logo'
 import { buttonVariants } from './ui/button'
 import UserMenu from './user-menu'
+import { ROUTE_PATH as LOGIN_PATH } from '~/routes/_auth.login'
 import { ROUTE_PATH as HOME_PATH } from '~/routes/_index'
 import { ROUTE_PATH as DASHBOARD_PATH } from '~/routes/dashboard'
-import { ROUTE_PATH as LOGIN_PATH } from '~/routes/login'
 import { cn } from '~/utils/misc'
 
 type NavigationProps = PropsWithChildren<{

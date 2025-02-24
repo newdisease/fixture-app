@@ -8,7 +8,7 @@ import Footer from '~/components/footer'
 import { Header } from '~/components/header'
 import { Navigation } from '~/components/navigation'
 import SubNavigation from '~/components/sub-navigation'
-import PageContainer from '~/components/ui/page-container'
+import { PageContainer } from '~/components/ui/page-container'
 import { requireUser } from '~/modules/auth/auth.server'
 import { siteConfig } from '~/utils/constants/brand'
 
@@ -46,12 +46,13 @@ export default function Dashboard() {
 	const { user } = useLoaderData<typeof loader>()
 
 	return (
-		<PageContainer footer={<Footer />}>
+		<PageContainer>
 			<Navigation user={user}>
 				<SubNavigation navItems={dashboardItems} />
 			</Navigation>
 			<Header headerItems={dashboardItems} />
 			<Outlet />
+			<Footer />
 		</PageContainer>
 	)
 }

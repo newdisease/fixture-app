@@ -6,7 +6,7 @@ const schema = z.object({
 	DATABASE_URL: z.string(),
 	GOOGLE_CLIENT_SECRET: z.string(),
 	GOOGLE_CLIENT_ID: z.string(),
-	ENCRYPTION_SECRET: z.string().optional(),
+	ENCRYPTION_SECRET: z.string(),
 	DEV_HOST_URL: z.string().optional(),
 	PROD_HOST_URL: z.string().optional(),
 	HONEYPOT_ENCRYPTION_SEED: z.string().optional(),
