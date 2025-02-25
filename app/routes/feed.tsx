@@ -52,7 +52,7 @@ export default function FeedPage() {
 	return (
 		<PageContainer>
 			<Navigation user={user ?? undefined} isAuth={!!user} simple={!user} />
-			<div className="mx-auto grid w-full max-w-screen-xl grid-cols-1 gap-6 p-4 sm:grid-cols-2 lg:grid-cols-3">
+			<div className="mx-auto grid w-full max-w-(--breakpoint-xl) grid-cols-1 gap-6 p-4 sm:grid-cols-2 lg:grid-cols-3">
 				{tasks.map((task) => (
 					<TaskCard key={task.id} task={task} onComplete={() => {}} />
 				))}

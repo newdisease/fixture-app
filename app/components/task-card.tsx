@@ -32,7 +32,7 @@ export function TaskCard({ task, onComplete }: TaskCardProps) {
 	const subscriberCount = subscriptions.length
 
 	return (
-		<Card className="max-w-md shadow-sm">
+		<Card className="max-w-md shadow-xs">
 			<CardHeader>
 				<CardTitle className="text-lg font-bold">{title}</CardTitle>
 				<CardDescription className="text-sm text-muted-foreground">

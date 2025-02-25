@@ -11,7 +11,7 @@ export default function SubNavigation({ navItems }: { navItems: NavItem[] }) {
 	const location = useLocation()
 
 	return (
-		<div className="mx-auto flex w-full max-w-screen-xl items-center gap-3">
+		<div className="mx-auto flex w-full max-w-(--breakpoint-xl) items-center gap-3">
 			{navItems.map(({ path, label }) => {
 				const isActive = location.pathname === path
 
