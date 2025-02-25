@@ -28,11 +28,11 @@ export default function Index() {
 	return (
 		<div className="relative flex h-lvh w-full flex-col justify-between bg-card">
 			<Navigation simple isAuth={!!user} />
-			<div className="z-10 mx-auto flex w-full max-w-screen-lg flex-col items-center justify-center gap-8 py-16">
+			<div className="z-10 mx-auto flex w-full max-w-(--breakpoint-lg) flex-col items-center justify-center gap-8 py-16">
 				<h1 className="text-center text-6xl font-extrabold leading-tight text-primary md:text-4xl lg:leading-tight">
 					Welcome to the
 					<br />
-					<span className="bg-gradient-to-r from-[#33d098] to-purple-400 bg-clip-text text-transparent dark:from-[#33d098] dark:to-purple-400 md:text-6xl">
+					<span className="bg-linear-to-r from-[#33d098] to-purple-400 bg-clip-text text-transparent dark:from-[#33d098] dark:to-purple-400 md:text-6xl">
 						Fixture App
 					</span>
 				</h1>
@@ -40,12 +40,12 @@ export default function Index() {
 				<Button
 					asChild
 					variant="default"
-					className="group h-12 w-48 transform bg-gradient-to-r from-green-400 to-blue-500 text-lg font-semibold text-white shadow-lg transition-transform duration-300 hover:scale-105 hover:from-green-500 hover:to-blue-600 dark:from-green-400 dark:to-blue-500 dark:hover:from-green-500 dark:hover:to-blue-600"
+					className="group h-12 w-48 transform bg-linear-to-r from-green-400 to-blue-500 text-lg font-semibold text-white shadow-lg transition-transform duration-300 hover:scale-105 hover:from-green-500 hover:to-blue-600 dark:from-green-400 dark:to-blue-500 dark:hover:from-green-500 dark:hover:to-blue-600"
 				>
 					<Link
 						to={FEED_PATH}
 						tabIndex={-1}
-						className="text-center outline-none"
+						className="text-center outline-hidden"
 					>
 						Show feed
 					</Link>

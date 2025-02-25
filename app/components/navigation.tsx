@@ -23,7 +23,7 @@ export function Navigation({
 }: NavigationProps) {
 	return (
 		<nav className="sticky top-0 z-50 flex w-full flex-col border-b border-border bg-card px-6">
-			<div className="mx-auto flex w-full max-w-screen-xl items-center justify-between py-3">
+			<div className="mx-auto flex w-full max-w-(--breakpoint-xl) items-center justify-between py-3">
 				<Link
 					to={HOME_PATH}
 					prefetch="intent"
