@@ -1,5 +1,8 @@
-import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
+import {
+	type LoaderFunctionArgs,
+	type MetaFunction,
+	useLoaderData,
+} from 'react-router'
 
 import { TaskCard } from '~/components/task-card'
 import { authenticator } from '~/modules/auth/auth.server'

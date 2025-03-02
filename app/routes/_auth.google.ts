@@ -1,4 +1,4 @@
-import { redirect, type ActionFunctionArgs } from '@remix-run/node'
+import { redirect, type ActionFunctionArgs } from 'react-router'
 
 import { authenticator } from '~/modules/auth/auth.server'
 

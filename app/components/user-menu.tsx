@@ -1,6 +1,6 @@
 import { type User } from '@prisma/client'
-import { useNavigate, useSubmit } from '@remix-run/react'
 import { LogOut, Settings } from 'lucide-react'
+import { useNavigate, useSubmit } from 'react-router'
 import { ThemeSwitcher } from './misc/theme-switcher'
 import { UserAvatar } from './misc/user-avatar'
 import { Button } from './ui/button'

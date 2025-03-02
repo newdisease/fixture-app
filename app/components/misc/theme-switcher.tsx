@@ -1,5 +1,5 @@
-import { useSubmit, useFetcher } from '@remix-run/react'
 import { Sun, Moon, Monitor } from 'lucide-react'
+import { useSubmit, useFetcher } from 'react-router'
 
 import {
 	Select,

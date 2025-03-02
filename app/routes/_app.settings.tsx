@@ -1,5 +1,4 @@
-import { type MetaFunction } from '@remix-run/node'
-import { Link, Outlet, useLocation } from '@remix-run/react'
+import { type MetaFunction, Link, Outlet, useLocation } from 'react-router'
 
 import { buttonVariants } from '~/components/ui/button'
 import { siteConfig } from '~/utils/constants/brand'

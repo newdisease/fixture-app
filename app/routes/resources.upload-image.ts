@@ -1,11 +1,6 @@
 import { type SubmissionResult } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
-import {
-	unstable_createMemoryUploadHandler,
-	unstable_parseMultipartFormData,
-	MaxPartSizeExceededError,
-} from '@remix-run/node'
-import { type ActionFunctionArgs } from '@remix-run/router'
+import { type ActionFunctionArgs } from 'react-router'
 import sharp from 'sharp'
 import { z } from 'zod'
 
@@ -27,16 +22,12 @@ export async function action({ request }: ActionFunctionArgs) {
 	try {
 		const user = await requireUser(request)
 
-		const formData = await unstable_parseMultipartFormData(
-			request,
-			unstable_createMemoryUploadHandler({ maxPartSize: MAX_FILE_SIZE }),
-		)
+		const formData = new FormData()
 		const submission = await parseWithZod(formData, {
 			schema: ImageSchema.transform(async (data) => {
 				const arrayBuffer = await data.imageFile.arrayBuffer()
-				const buffer = Buffer.from(arrayBuffer)
 
-				const metadata = await sharp(buffer).metadata()
+				const metadata = await sharp(arrayBuffer).metadata()
 
 				if (!metadata.width || !metadata.height) {
 					throw new Error('Unable to retrieve image dimensions.')
@@ -45,11 +36,11 @@ export async function action({ request }: ActionFunctionArgs) {
 				let processedImageBuffer
 
 				if (metadata.width <= metadata.height) {
-					processedImageBuffer = await sharp(buffer)
+					processedImageBuffer = await sharp(arrayBuffer)
 						.resize({ width: MAX_THUMBNAIL_DIMENSION })
 						.toBuffer()
 				} else {
-					processedImageBuffer = await sharp(buffer)
+					processedImageBuffer = await sharp(arrayBuffer)
 						.resize({ height: MAX_THUMBNAIL_DIMENSION })
 						.toBuffer()
 				}
@@ -85,7 +76,10 @@ export async function action({ request }: ActionFunctionArgs) {
 			}),
 		})
 	} catch (error: unknown) {
-		if (error instanceof MaxPartSizeExceededError) {
+		if (
+			error instanceof Error &&
+			error.message === 'Image size must be less than 2MB.'
+		) {
 			const result: SubmissionResult = {
 				initialValue: {},
 				status: 'error',
