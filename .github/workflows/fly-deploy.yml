@@ -30,7 +30,7 @@ jobs:
         with:
           cache: npm
           cache-dependency-path: ./package.json
-          node-version: 18
+          node-version: 22
 
       - name: 📥 Install deps
         run: npm install
@@ -50,7 +50,7 @@ jobs:
         with:
           cache: npm
           cache-dependency-path: ./package.json
-          node-version: 18
+          node-version: 22
 
       - name: 📥 Install deps
         run: npm install
@@ -70,7 +70,7 @@ jobs:
         with:
           cache: npm
           cache-dependency-path: ./package.json
-          node-version: 18
+          node-version: 22
 
       - name: 📥 Install deps
         run: npm install
