@@ -5,7 +5,7 @@ import { buttonVariants } from '~/components/ui/button'
 import { siteConfig } from '~/utils/constants/brand'
 import { cn } from '~/utils/misc'
 
-export const ROUTE_PATH = '/dashboard/settings/' as const
+export const ROUTE_PATH = '/settings/' as const
 
 export const meta: MetaFunction = () => {
 	return [{ title: `${siteConfig.siteTitle} | Settings` }]
@@ -28,7 +28,7 @@ export default function Settings() {
 					>
 						<span
 							className={cn(
-								`text-sm text-primary/80 ${isSettingsPath && 'font-medium text-primary'}`,
+								`text-primary/80 text-sm ${isSettingsPath && 'text-primary font-medium'}`,
 							)}
 						>
 							General

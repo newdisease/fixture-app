@@ -14,8 +14,8 @@ import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { useHydrated } from 'remix-utils/use-hydrated'
 import { z } from 'zod'
 
+import { ROUTE_PATH as FEED_PATH } from './_app.feed'
 import { ROUTE_PATH as LOGIN_PATH } from './_auth.login'
-import { ROUTE_PATH as DASHBOARD_PATH } from './dashboard'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { requireSessionUser } from '~/modules/auth/auth.server'
@@ -54,7 +54,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		where: { id: sessionUser?.id },
 	})
 	if (user?.username) {
-		throw redirect(DASHBOARD_PATH)
+		throw redirect(FEED_PATH)
 	}
 
 	return {}
@@ -94,7 +94,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		data: { username },
 	})
 
-	return redirect(DASHBOARD_PATH)
+	return redirect(FEED_PATH)
 }
 
 export default function OnboardingUsername() {
@@ -116,17 +116,17 @@ export default function OnboardingUsername() {
 	}, [isHydrated])
 
 	return (
-		<div className="relative flex h-screen w-full bg-card">
+		<div className="bg-card relative flex h-screen w-full">
 			<div className="mx-auto flex h-full w-full max-w-96 flex-col items-center justify-center gap-6">
 				<div className="flex flex-col items-center gap-4">
-					<span className="mb-4 animate-bounce select-none text-7xl">🚀</span>
-					<h3 className="text-center text-3xl font-bold text-primary">
+					<span className="mb-4 animate-bounce text-7xl select-none">🚀</span>
+					<h3 className="text-primary text-center text-3xl font-bold">
 						Welcome Aboard!
 					</h3>
-					<p className="text-center text-lg font-medium text-primary/70">
+					<p className="text-primary/70 text-center text-lg font-medium">
 						Choose a unique username to get started.
 					</p>
-					<p className="text-center text-sm font-light text-primary/50">
+					<p className="text-primary/50 text-center text-sm font-light">
 						Your username will be your unique identity on our platform.
 					</p>
 				</div>
@@ -158,7 +158,7 @@ export default function OnboardingUsername() {
 						/>
 						<div className="h-6">
 							{username.errors && (
-								<span className="text-sm text-destructive dark:text-destructive-foreground">
+								<span className="text-destructive dark:text-destructive-foreground text-sm">
 									{username.errors.join(' ')}
 								</span>
 							)}

@@ -12,10 +12,9 @@ import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { useHydrated } from 'remix-utils/use-hydrated'
 import { z } from 'zod'
-import { ROUTE_PATH as DASHBOARD_PATH } from './dashboard'
+import { ROUTE_PATH as FEED_PATH } from './_app.feed'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
-import { PageContainer } from '~/components/ui/page-container'
 import { commitSession, getSession } from '~/modules/auth/auth-session.server'
 import { authenticator } from '~/modules/auth/auth.server'
 import { siteConfig } from '~/utils/constants/brand'
@@ -34,7 +33,7 @@ export const meta: MetaFunction = () => {
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await authenticator.isAuthenticated(request, {
-		successRedirect: DASHBOARD_PATH,
+		successRedirect: FEED_PATH,
 	})
 
 	const cookie = await getSession(request.headers.get('Cookie'))
@@ -81,77 +80,74 @@ export default function Verify() {
 	}, [isHydrated])
 
 	return (
-		<PageContainer>
-			<div className="m-auto flex h-full w-full max-w-96 flex-col items-center justify-center gap-6">
-				<div className="mb-2 flex flex-col gap-2">
-					<p className="text-center text-2xl text-primary">Check your inbox!</p>
-					<p className="text-center text-base font-normal text-primary/60">
-						We&apos;ve just emailed you a temporary password.
-						<br />
-						Please enter it below.
-					</p>
-				</div>
-				<Form
-					method="POST"
-					autoComplete="off"
-					className="flex w-full flex-col items-start gap-1"
-					{...getFormProps(codeForm)}
-				>
-					<AuthenticityTokenInput />
-					<HoneypotInputs />
-
-					<div className="flex w-full flex-col gap-1.5">
-						<label htmlFor="code" className="sr-only">
-							Code
-						</label>
-						<Input
-							placeholder="Code"
-							ref={inputRef}
-							required
-							className={`bg-transparent ${
-								code.errors &&
-								'border-destructive focus-visible:ring-destructive'
-							}`}
-							{...getInputProps(code, { type: 'text' })}
-						/>
-					</div>
-
-					<div className="flex flex-col">
-						{!authError && code.errors && (
-							<span className="mb-2 text-sm text-destructive dark:text-destructive-foreground">
-								{code.errors.join(' ')}
-							</span>
-						)}
-						{authEmail && authError && (
-							<span className="mb-2 text-sm text-destructive dark:text-destructive-foreground">
-								{authError.message}
-							</span>
-						)}
-					</div>
-
-					<Button type="submit" className="w-full">
-						Continue
-					</Button>
-				</Form>
-
-				{/* Request New Code. */}
-				{/* Email is already in session, input it's not required. */}
-				<Form method="POST" className="flex w-full flex-col">
-					<AuthenticityTokenInput />
-					<HoneypotInputs />
-
-					<p className="text-center text-sm font-normal text-primary/60">
-						Did not receive the code?
-					</p>
-					<Button
-						type="submit"
-						variant="ghost"
-						className="w-full hover:bg-transparent"
-					>
-						Request New Code
-					</Button>
-				</Form>
+		<div className="m-auto flex h-full w-full max-w-96 flex-col items-center justify-center gap-6">
+			<div className="mb-2 flex flex-col gap-2">
+				<p className="text-primary text-center text-2xl">Check your inbox!</p>
+				<p className="text-primary/60 text-center text-base font-normal">
+					We&apos;ve just emailed you a temporary password.
+					<br />
+					Please enter it below.
+				</p>
 			</div>
-		</PageContainer>
+			<Form
+				method="POST"
+				autoComplete="off"
+				className="flex w-full flex-col items-start gap-1"
+				{...getFormProps(codeForm)}
+			>
+				<AuthenticityTokenInput />
+				<HoneypotInputs />
+
+				<div className="flex w-full flex-col gap-1.5">
+					<label htmlFor="code" className="sr-only">
+						Code
+					</label>
+					<Input
+						placeholder="Code"
+						ref={inputRef}
+						required
+						className={`bg-transparent ${
+							code.errors && 'border-destructive focus-visible:ring-destructive'
+						}`}
+						{...getInputProps(code, { type: 'text' })}
+					/>
+				</div>
+
+				<div className="flex flex-col">
+					{!authError && code.errors && (
+						<span className="text-destructive dark:text-destructive-foreground mb-2 text-sm">
+							{code.errors.join(' ')}
+						</span>
+					)}
+					{authEmail && authError && (
+						<span className="text-destructive dark:text-destructive-foreground mb-2 text-sm">
+							{authError.message}
+						</span>
+					)}
+				</div>
+
+				<Button type="submit" className="w-full">
+					Continue
+				</Button>
+			</Form>
+
+			{/* Request New Code. */}
+			{/* Email is already in session, input it's not required. */}
+			<Form method="POST" className="flex w-full flex-col">
+				<AuthenticityTokenInput />
+				<HoneypotInputs />
+
+				<p className="text-primary/60 text-center text-sm font-normal">
+					Did not receive the code?
+				</p>
+				<Button
+					type="submit"
+					variant="ghost"
+					className="w-full hover:bg-transparent"
+				>
+					Request New Code
+				</Button>
+			</Form>
+		</div>
 	)
 }

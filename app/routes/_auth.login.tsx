@@ -16,7 +16,6 @@ import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { useHydrated } from 'remix-utils/use-hydrated'
 import { z } from 'zod'
 import { ROUTE_PATH as AUTH_VERIFY_PATH } from './_auth.verify-code.tsx'
-import { ROUTE_PATH as DASHBOARD_PATH } from './dashboard'
 import { MainLogo } from '~/components/misc/main-logo'
 import { ThemeSwitcherHome } from '~/components/misc/theme-switcher'
 import { Button } from '~/components/ui/button'
@@ -24,6 +23,7 @@ import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { commitSession, getSession } from '~/modules/auth/auth-session.server'
 import { authenticator } from '~/modules/auth/auth.server'
+import { ROUTE_PATH as FEED_PATH } from '~/routes/_app.feed.tsx'
 import { ROUTE_PATH as AUTH_GOOGLE_PATH } from '~/routes/_auth.google'
 import { siteConfig } from '~/utils/constants/brand'
 import { validateCSRF } from '~/utils/csrf.server'
@@ -59,7 +59,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const sessionUser = await authenticator.isAuthenticated(request)
 
 	if (sessionUser) {
-		throw redirect(DASHBOARD_PATH)
+		throw redirect(FEED_PATH)
 	}
 
 	const cookie = await getSession(request.headers.get('Cookie'))
@@ -89,7 +89,7 @@ export default function LoginPage() {
 	}, [isHydrated])
 
 	return (
-		<div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
+		<div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
 			<div className="w-full max-w-sm">
 				<div className="flex flex-col gap-6">
 					<a href="/" className="flex flex-col items-center font-medium">
@@ -111,12 +111,12 @@ export default function LoginPage() {
 								{...getInputProps(email, { type: 'email' })}
 							/>
 							{!authError && email.errors && (
-								<span className="mb-2 text-sm text-destructive dark:text-destructive-foreground">
+								<span className="text-destructive dark:text-destructive-foreground mb-2 text-sm">
 									{email.errors.join(' ')}
 								</span>
 							)}
 							{!authEmail && authError && (
-								<span className="mb-2 text-sm text-destructive dark:text-destructive-foreground">
+								<span className="text-destructive dark:text-destructive-foreground mb-2 text-sm">
 									{authError.message}
 								</span>
 							)}
@@ -132,8 +132,8 @@ export default function LoginPage() {
 						<AuthenticityTokenInput />
 						<HoneypotInputs />
 					</Form>
-					<div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-						<span className="relative z-10 bg-background px-2 text-muted-foreground">
+					<div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+						<span className="bg-background text-muted-foreground relative z-10 px-2">
 							Or
 						</span>
 					</div>
@@ -148,7 +148,7 @@ export default function LoginPage() {
 							Continue with Google
 						</Button>
 					</Form>
-					<div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
+					<div className="text-muted-foreground [&_a]:hover:text-primary text-center text-xs text-balance [&_a]:underline [&_a]:underline-offset-4">
 						By clicking continue, you agree to our{' '}
 						<a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
 					</div>

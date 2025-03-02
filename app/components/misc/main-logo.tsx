@@ -1,7 +1,13 @@
-export function MainLogo() {
+import { cn } from '~/utils/misc'
+
+type Props = {
+	className?: string
+}
+
+export function MainLogo(props: Props) {
 	return (
 		<svg
-			className="text-[#363636] dark:text-white"
+			className={(cn('text-[#363636] dark:text-white'), props.className)}
 			xmlns="http://www.w3.org/2000/svg"
 			width="110"
 			height="25"

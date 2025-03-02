@@ -30,7 +30,7 @@ export async function sendEmail(options: SendEmailOptions) {
 		throw new Error(`Resend - ${ERRORS.ENVS_NOT_INITIALIZED}`)
 	}
 
-	const from = 'noreply@fixture-app.fly.dev'
+	const from = 'onboarding@resend.dev'
 	const email = { from, ...options }
 
 	const response = await fetch('https://api.resend.com/emails', {
