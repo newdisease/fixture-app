@@ -35,7 +35,7 @@ export function TaskCard({ task, onComplete }: TaskCardProps) {
 		<Card className="max-w-md shadow-xs">
 			<CardHeader>
 				<CardTitle className="text-lg font-bold">{title}</CardTitle>
-				<CardDescription className="text-sm text-muted-foreground">
+				<CardDescription className="text-muted-foreground text-sm">
 					{description}
 				</CardDescription>
 			</CardHeader>
