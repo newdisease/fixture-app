@@ -1,6 +1,7 @@
 import {
 	type LinksFunction,
 	type LoaderFunctionArgs,
+	data,
 	Links,
 	Meta,
 	Outlet,
@@ -54,7 +55,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const { toast, headers: toastHeaders } = await getToastSession(request)
 	const [csrfToken, csrfCookieHeader] = await csrf.commitToken()
 
-	return Response.json(
+	return data(
 		{
 			user,
 			toast,
