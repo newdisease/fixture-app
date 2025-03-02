@@ -1,18 +1,16 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
+import { Upload } from 'lucide-react'
+import { useRef, useState } from 'react'
 import {
 	type ActionFunctionArgs,
 	type LoaderFunctionArgs,
 	redirect,
-} from '@remix-run/node'
-import {
 	Form,
 	useActionData,
 	useFetcher,
 	useLoaderData,
-} from '@remix-run/react'
-import { Upload } from 'lucide-react'
-import { useRef, useState } from 'react'
+} from 'react-router'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
@@ -156,7 +154,7 @@ export default function DashboardSettings() {
 								const reader = new FileReader()
 								reader.onload = (readerEvent) => {
 									setImageSrc(readerEvent.target?.result?.toString() ?? null)
-									uploadImageFetcher.submit(form)
+									void uploadImageFetcher.submit(form)
 								}
 								reader.readAsDataURL(file)
 							}
@@ -173,7 +171,7 @@ export default function DashboardSettings() {
 							size="sm"
 							variant="secondary"
 							onClick={() => {
-								resetImageFetcher.submit(
+								void resetImageFetcher.submit(
 									{},
 									{
 										method: 'POST',

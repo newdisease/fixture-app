@@ -6,14 +6,14 @@
 
 import { PassThrough } from 'node:stream'
 
-import {
-	type AppLoadContext,
-	type EntryContext,
-	createReadableStreamFromReadable,
-} from '@remix-run/node'
-import { RemixServer } from '@remix-run/react'
+import { createReadableStreamFromReadable } from '@react-router/node'
 import { isbot } from 'isbot'
 import { renderToPipeableStream } from 'react-dom/server'
+import {
+	ServerRouter,
+	type AppLoadContext,
+	type EntryContext,
+} from 'react-router'
 import { initEnvs } from './utils/env.server'
 import { NonceProvider } from './utils/hooks/use-nonce'
 
@@ -28,7 +28,7 @@ export default function handleRequest(
 	request: Request,
 	responseStatusCode: number,
 	responseHeaders: Headers,
-	remixContext: EntryContext,
+	reactRouterContext: EntryContext,
 	// This is ignored so we can keep it in the template for visibility.  Feel
 	// free to delete this parameter in your app if you're not using it!
 
@@ -46,14 +46,14 @@ export default function handleRequest(
 				request,
 				responseStatusCode,
 				responseHeaders,
-				remixContext,
+				reactRouterContext,
 				nonce,
 			)
 		: handleBrowserRequest(
 				request,
 				responseStatusCode,
 				responseHeaders,
-				remixContext,
+				reactRouterContext,
 				nonce,
 			)
 }
@@ -62,18 +62,14 @@ function handleBotRequest(
 	request: Request,
 	responseStatusCode: number,
 	responseHeaders: Headers,
-	remixContext: EntryContext,
+	reactRouterContext: EntryContext,
 	nonce: string,
 ) {
 	return new Promise((resolve, reject) => {
 		let shellRendered = false
 		const { pipe, abort } = renderToPipeableStream(
 			<NonceProvider value={nonce}>
-				<RemixServer
-					context={remixContext}
-					url={request.url}
-					abortDelay={ABORT_DELAY}
-				/>
+				<ServerRouter context={reactRouterContext} url={request.url} />
 			</NonceProvider>,
 			{
 				onAllReady() {
@@ -115,18 +111,14 @@ function handleBrowserRequest(
 	request: Request,
 	responseStatusCode: number,
 	responseHeaders: Headers,
-	remixContext: EntryContext,
+	reactRouterContext: EntryContext,
 	nonce: string,
 ) {
 	return new Promise((resolve, reject) => {
 		let shellRendered = false
 		const { pipe, abort } = renderToPipeableStream(
 			<NonceProvider value={nonce}>
-				<RemixServer
-					context={remixContext}
-					url={request.url}
-					abortDelay={ABORT_DELAY}
-				/>
+				<ServerRouter context={reactRouterContext} url={request.url} />
 			</NonceProvider>,
 			{
 				onShellReady() {

@@ -1,4 +1,4 @@
-import { type ActionFunctionArgs, redirect } from '@remix-run/node'
+import { type ActionFunctionArgs, redirect } from 'react-router'
 import { safeRedirect } from 'remix-utils/safe-redirect'
 
 import { ThemeSchema, setTheme } from '~/utils/hooks/use-theme'

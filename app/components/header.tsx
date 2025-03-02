@@ -1,6 +1,6 @@
 import { type User } from '@prisma/client'
-import { Link, NavLink, useNavigate } from '@remix-run/react'
 import { LogIn, Menu as MenuIcon } from 'lucide-react'
+import { Link, NavLink, useNavigate } from 'react-router'
 import { MainLogo } from './misc/main-logo'
 import { Button } from './ui/button'
 import {

@@ -1,12 +1,13 @@
-import { type LinksFunction, type LoaderFunctionArgs } from '@remix-run/node'
 import {
+	type LinksFunction,
+	type LoaderFunctionArgs,
 	Links,
 	Meta,
 	Outlet,
 	Scripts,
 	ScrollRestoration,
 	useLoaderData,
-} from '@remix-run/react'
+} from 'react-router'
 import { AuthenticityTokenProvider } from 'remix-utils/csrf/react'
 import { HoneypotProvider } from 'remix-utils/honeypot/react'
 
