@@ -26,7 +26,9 @@ export default function Dashboard() {
 	return (
 		<>
 			<Header user={user} />
-			<Outlet />
+			<main className="flex-grow">
+				<Outlet />
+			</main>
 			<Footer />
 		</>
 	)

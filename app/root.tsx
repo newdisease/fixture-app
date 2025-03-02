@@ -102,7 +102,7 @@ function Document({
 				<Meta />
 				<Links />
 			</head>
-			<body className="h-auto w-full">
+			<body className="flex min-h-screen flex-col">
 				{children}
 				<ScrollRestoration nonce={nonce} />
 				<Scripts nonce={nonce} />
