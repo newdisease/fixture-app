@@ -1,10 +1,7 @@
 import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import Footer from '~/components/footer'
 
-import { Navigation } from '~/components/navigation'
 import { TaskCard } from '~/components/task-card'
-import { PageContainer } from '~/components/ui/page-container'
 import { authenticator } from '~/modules/auth/auth.server'
 import { siteConfig } from '~/utils/constants/brand'
 import { prisma } from '~/utils/db.server'
@@ -12,7 +9,7 @@ import { prisma } from '~/utils/db.server'
 export const ROUTE_PATH = '/feed' as const
 
 export const meta: MetaFunction = () => {
-	return [{ title: `${siteConfig.siteTitle} | Feed` }]
+	return [{ title: `Feed | ${siteConfig.siteTitle}` }]
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -49,15 +46,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function FeedPage() {
 	const { user, tasks } = useLoaderData<typeof loader>()
+	console.log(user)
 	return (
-		<PageContainer>
-			<Navigation user={user ?? undefined} isAuth={!!user} simple={!user} />
-			<div className="mx-auto grid w-full max-w-(--breakpoint-xl) grid-cols-1 gap-6 p-4 sm:grid-cols-2 lg:grid-cols-3">
-				{tasks.map((task) => (
-					<TaskCard key={task.id} task={task} onComplete={() => {}} />
-				))}
-			</div>
-			<Footer />
-		</PageContainer>
+		<div className="mx-auto grid w-full max-w-(--breakpoint-xl) grid-cols-1 gap-6 p-4 sm:grid-cols-2 lg:grid-cols-3">
+			{tasks.map((task) => (
+				<TaskCard key={task.id} task={task} onComplete={() => {}} />
+			))}
+		</div>
 	)
 }

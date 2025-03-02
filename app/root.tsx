@@ -112,6 +112,23 @@ function Document({
 	)
 }
 
+export function ErrorBoundary() {
+	const nonce = useNonce()
+	const theme = useTheme()
+
+	return (
+		<Document nonce={nonce} theme={theme}>
+			<GenericErrorBoundary
+				statusHandlers={{
+					403: ({ error }) => (
+						<p>You are not allowed to do that: {error?.data.message}</p>
+					),
+				}}
+			/>
+		</Document>
+	)
+}
+
 export default function AppWithProviders() {
 	const { csrfToken, honeypotProps, toast } = useLoaderData<typeof loader>()
 
@@ -127,23 +144,6 @@ export default function AppWithProviders() {
 					<Outlet />
 				</HoneypotProvider>
 			</AuthenticityTokenProvider>
-		</Document>
-	)
-}
-
-export function ErrorBoundary() {
-	const nonce = useNonce()
-	const theme = useTheme()
-
-	return (
-		<Document nonce={nonce} theme={theme}>
-			<GenericErrorBoundary
-				statusHandlers={{
-					403: ({ error }) => (
-						<p>You are not allowed to do that: {error?.data.message}</p>
-					),
-				}}
-			/>
 		</Document>
 	)
 }

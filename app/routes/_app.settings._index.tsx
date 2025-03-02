@@ -17,7 +17,7 @@ import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 
-import { ROUTE_PATH as HOME_PATH } from './_index'
+import { ROUTE_PATH as FEED_PATH } from './_app.feed'
 import { UserAvatar } from '~/components/misc/user-avatar'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
@@ -77,7 +77,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	if (intent === INTENTS.USER_DELETE_ACCOUNT) {
 		await prisma.user.delete({ where: { id: user.id } })
-		return redirect(HOME_PATH, {
+		return redirect(FEED_PATH, {
 			headers: {
 				'Set-Cookie': await destroySession(
 					await getSession(request.headers.get('Cookie')),
@@ -124,12 +124,12 @@ export default function DashboardSettings() {
 				ref={imageFormRef}
 				onReset={() => setImageSrc(null)}
 				{...getFormProps(avatarForm)}
-				className="flex w-full flex-col items-start rounded-lg border border-border bg-card"
+				className="border-border bg-card flex w-full flex-col items-start rounded-lg border"
 			>
 				<div className="flex w-full items-start justify-between rounded-lg p-6">
 					<div className="flex flex-col gap-2">
-						<h2 className="text-xl font-medium text-primary">Your Avatar</h2>
-						<p className="text-sm font-normal text-primary/60">
+						<h2 className="text-primary text-xl font-medium">Your Avatar</h2>
+						<p className="text-primary/60 text-sm font-normal">
 							This is your avatar. It will be displayed on your profile.
 						</p>
 					</div>
@@ -138,8 +138,8 @@ export default function DashboardSettings() {
 						className="group relative flex cursor-pointer rounded-full transition active:scale-95 sm:overflow-hidden"
 					>
 						<UserAvatar user={user} className="sm:h-20 sm:w-20" />
-						<div className="absolute z-10 hidden h-full w-full items-center justify-center bg-primary/40 group-hover:flex">
-							<Upload className="h-6 w-6 text-secondary" />
+						<div className="bg-primary/40 absolute z-10 hidden h-full w-full items-center justify-center group-hover:flex">
+							<Upload className="text-secondary h-6 w-6" />
 						</div>
 					</label>
 					<input
@@ -163,8 +163,8 @@ export default function DashboardSettings() {
 						}}
 					/>
 				</div>
-				<div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-t border-border bg-secondary px-6 dark:bg-card">
-					<p className="text-sm font-normal text-primary/60">
+				<div className="border-border bg-secondary dark:bg-card flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-t px-6">
+					<p className="text-primary/60 text-sm font-normal">
 						Click on the avatar to upload a custom one from your files.
 					</p>
 					{user.image?.id && !avatarFields.imageFile.errors ? (
@@ -189,7 +189,7 @@ export default function DashboardSettings() {
 						</Button>
 					) : null}
 					{avatarFields.imageFile.errors ? (
-						<p className="text-right text-sm text-destructive dark:text-destructive-foreground">
+						<p className="text-destructive dark:text-destructive-foreground text-right text-sm">
 							{avatarFields.imageFile.errors.join(' ')}
 						</p>
 					) : null}
@@ -199,13 +199,13 @@ export default function DashboardSettings() {
 			{/* Full Name */}
 			<Form
 				method="POST"
-				className="flex w-full flex-col items-start rounded-lg border border-border bg-card"
+				className="border-border bg-card flex w-full flex-col items-start rounded-lg border"
 				{...getFormProps(form)}
 			>
 				<div className="flex w-full flex-col gap-4 rounded-lg p-6">
 					<div className="flex flex-col gap-2">
-						<h2 className="text-xl font-medium text-primary">Your Name</h2>
-						<p className="text-sm font-normal text-primary/60">
+						<h2 className="text-primary text-xl font-medium">Your Name</h2>
+						<p className="text-primary/60 text-sm font-normal">
 							This is your name. It will be displayed on your profile.
 						</p>
 					</div>
@@ -221,15 +221,15 @@ export default function DashboardSettings() {
 						{...getInputProps(fullName, { type: 'text' })}
 					/>
 					{fullName.errors ? (
-						<p className="text-sm text-destructive dark:text-destructive-foreground">
+						<p className="text-destructive dark:text-destructive-foreground text-sm">
 							{fullName.errors.join(' ')}
 						</p>
 					) : null}
 					<AuthenticityTokenInput />
 					<HoneypotInputs />
 				</div>
-				<div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-t border-border bg-secondary px-6 dark:bg-card">
-					<p className="text-sm font-normal text-primary/60">
+				<div className="border-border bg-secondary dark:bg-card flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-t px-6">
+					<p className="text-primary/60 text-sm font-normal">
 						Please use 32 characters at maximum.
 					</p>
 					<Button
@@ -244,15 +244,15 @@ export default function DashboardSettings() {
 			</Form>
 
 			{/* Delete Account */}
-			<div className="flex w-full flex-col items-start rounded-lg border border-destructive bg-card">
+			<div className="border-destructive bg-card flex w-full flex-col items-start rounded-lg border">
 				<div className="flex flex-col gap-2 p-6">
-					<h2 className="text-xl font-medium text-primary">Delete Account</h2>
-					<p className="text-sm font-normal text-primary/60">
+					<h2 className="text-primary text-xl font-medium">Delete Account</h2>
+					<p className="text-primary/60 text-sm font-normal">
 						Permanently delete your account.
 					</p>
 				</div>
-				<div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-t border-border bg-red-500/10 px-6 dark:bg-red-500/10">
-					<p className="text-sm font-normal text-primary/60">
+				<div className="border-border flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-t bg-red-500/10 px-6 dark:bg-red-500/10">
+					<p className="text-primary/60 text-sm font-normal">
 						This action cannot be undone, proceed with caution.
 					</p>
 					<Form method="POST">

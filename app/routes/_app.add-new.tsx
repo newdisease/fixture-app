@@ -14,7 +14,7 @@ import { Form, useActionData } from '@remix-run/react'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
-import { ROUTE_PATH as FEED_PATH } from './feed'
+import { ROUTE_PATH as FEED_PATH } from './_app.feed'
 import { Button } from '~/components/ui/button'
 import { DateTimePicker } from '~/components/ui/datetime-picker'
 import { Input } from '~/components/ui/input'
@@ -27,7 +27,7 @@ import { validateCSRF } from '~/utils/csrf.server'
 import { prisma } from '~/utils/db.server'
 import { redirectWithToast } from '~/utils/toast.server'
 
-export const ROUTE_PATH = '/dashboard/add-new' as const
+export const ROUTE_PATH = '/add-new' as const
 
 const TaskSchema = z.object({
 	title: z.string().min(1, 'Title is required').max(100),
