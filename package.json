@@ -44,7 +44,7 @@
     "crypto-js": "^4.2.0",
     "date-fns": "^3.6.0",
     "isbot": "^5.1.23",
-    "lucide-react": "^0.475.0",
+    "lucide-react": "^0.477.0",
     "prisma": "^6.4.1",
     "react": "^18.2.0",
     "react-day-picker": "^8.10.1",
