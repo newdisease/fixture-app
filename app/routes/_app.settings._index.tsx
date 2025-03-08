@@ -5,8 +5,8 @@ import { useRef, useState } from 'react'
 import {
 	type ActionFunctionArgs,
 	type LoaderFunctionArgs,
-	redirect,
 	Form,
+	redirect,
 	useActionData,
 	useFetcher,
 	useLoaderData,
@@ -19,8 +19,8 @@ import { ROUTE_PATH as FEED_PATH } from './_app.feed'
 import { UserAvatar } from '~/components/misc/user-avatar'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
-import { destroySession, getSession } from '~/modules/auth/auth-session.server'
-import { requireUser } from '~/modules/auth/auth.server'
+
+import { destroySession, requireUser } from '~/modules/auth/auth.server'
 import { ROUTE_PATH as RESET_IMAGE_PATH } from '~/routes/resources.reset-image'
 import {
 	type action as uploadImageAction,
@@ -74,14 +74,18 @@ export async function action({ request }: ActionFunctionArgs) {
 	}
 
 	if (intent === INTENTS.USER_DELETE_ACCOUNT) {
-		await prisma.user.delete({ where: { id: user.id } })
-		return redirect(FEED_PATH, {
-			headers: {
-				'Set-Cookie': await destroySession(
-					await getSession(request.headers.get('Cookie')),
-				),
-			},
+		// Delete user and all related data in a transaction
+		await prisma.$transaction(async (tx) => {
+			// Delete related records.
+			await tx.task.deleteMany({ where: { creatorId: user.id } })
+			await tx.userImage.deleteMany({ where: { userId: user.id } })
+			await tx.subscription.deleteMany({ where: { userId: user.id } })
+
+			// Finally delete the user.
+			await tx.user.delete({ where: { id: user.id } })
 		})
+		const headers = await destroySession(request)
+		return redirect(FEED_PATH, { headers })
 	}
 
 	throw new Error(`Invalid intent: ${intent}`)

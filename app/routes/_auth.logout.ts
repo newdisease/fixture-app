@@ -1,13 +1,11 @@
-import { type LoaderFunctionArgs, type ActionFunctionArgs } from 'react-router'
+import { type ActionFunctionArgs, redirect } from 'react-router'
 
-import { authenticator } from '~/modules/auth/auth.server'
+import { ROUTE_PATH as FEED_PATH } from './_app.feed'
+import { destroySession } from '~/modules/auth/auth.server'
 
 export const ROUTE_PATH = '/logout' as const
 
-export async function loader({ request }: LoaderFunctionArgs) {
-	return authenticator.logout(request, { redirectTo: '/' })
-}
-
 export async function action({ request }: ActionFunctionArgs) {
-	return authenticator.logout(request, { redirectTo: '/' })
+	const headers = await destroySession(request)
+	return redirect(FEED_PATH, { headers })
 }

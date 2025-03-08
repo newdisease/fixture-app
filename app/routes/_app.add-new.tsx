@@ -1,9 +1,4 @@
-import {
-	getFormProps,
-	getInputProps,
-	useForm,
-	useInputControl,
-} from '@conform-to/react'
+import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import {
 	type ActionFunctionArgs,
@@ -17,7 +12,6 @@ import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 import { ROUTE_PATH as FEED_PATH } from './_app.feed'
 import { Button } from '~/components/ui/button'
-import { DateTimePicker } from '~/components/ui/datetime-picker'
 import { Input } from '~/components/ui/input'
 import { Textarea } from '~/components/ui/textarea'
 
@@ -91,13 +85,6 @@ export default function NewTaskPage() {
 		},
 	})
 
-	const deadlineField = useInputControl(deadline)
-
-	const handleDateChange = (date: Date | undefined) => {
-		if (!date) return
-		deadlineField.change(date.toISOString())
-	}
-
 	return (
 		<div className="m-auto p-9">
 			<Form
@@ -141,7 +128,15 @@ export default function NewTaskPage() {
 				</div>
 				<div className="flex max-w-lg flex-col gap-4 rounded-lg p-6">
 					<p className="text-primary/60 text-sm font-normal">Deadline</p>
-					<DateTimePicker onDateChange={handleDateChange} />
+					<Input
+						autoComplete="off"
+						required
+						className={`w-80 bg-transparent ${
+							deadline.errors &&
+							'border-destructive focus-visible:ring-destructive'
+						}`}
+						{...getInputProps(deadline, { type: 'datetime-local' })}
+					/>
 					{deadline.errors && (
 						<p className="text-destructive dark:text-destructive-foreground text-sm">
 							{deadline.errors.join(' ')}
