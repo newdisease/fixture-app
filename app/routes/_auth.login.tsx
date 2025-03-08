@@ -1,29 +1,31 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
+import { Cookie } from '@mjackson/headers'
 import { Loader2 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import {
 	type ActionFunctionArgs,
-	data,
 	type LoaderFunctionArgs,
 	redirect,
 	Form,
-	useLoaderData,
 	type MetaFunction,
+	useLoaderData,
 } from 'react-router'
 
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { useHydrated } from 'remix-utils/use-hydrated'
 import { z } from 'zod'
-import { ROUTE_PATH as AUTH_VERIFY_PATH } from './_auth.verify-code.tsx'
 import { MainLogo } from '~/components/misc/main-logo'
 import { ThemeSwitcherHome } from '~/components/misc/theme-switcher'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { commitSession, getSession } from '~/modules/auth/auth-session.server'
-import { authenticator } from '~/modules/auth/auth.server'
+import {
+	authenticator,
+	getSessionUser,
+	TOTP_COOKIE_KEY,
+} from '~/modules/auth/auth.server'
 import { ROUTE_PATH as FEED_PATH } from '~/routes/_app.feed.tsx'
 import { ROUTE_PATH as AUTH_GOOGLE_PATH } from '~/routes/_auth.google'
 import { siteConfig } from '~/utils/constants/brand'
@@ -38,42 +40,39 @@ export const LoginSchema = z.object({
 })
 
 export const meta: MetaFunction = () => {
-	return [{ title: `${siteConfig.siteTitle} | Login` }]
-}
-
-export async function action({ request }: ActionFunctionArgs) {
-	const url = new URL(request.url)
-	const pathname = url.pathname
-
-	const clonedRequest = request.clone()
-	const formData = await clonedRequest.formData()
-	await validateCSRF(formData, clonedRequest.headers)
-	checkHoneypot(formData)
-
-	await authenticator.authenticate('TOTP', request, {
-		successRedirect: AUTH_VERIFY_PATH,
-		failureRedirect: pathname,
-	})
+	return [{ title: `Login | ${siteConfig.siteTitle}` }]
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-	const sessionUser = await authenticator.isAuthenticated(request)
-
+	const sessionUser = await getSessionUser(request)
 	if (sessionUser) {
 		throw redirect(FEED_PATH)
 	}
 
-	const cookie = await getSession(request.headers.get('Cookie'))
-	const authEmail = cookie.get('auth:email')
-	const authError = cookie.get(authenticator.sessionErrorKey)
-	return data(
-		{ authEmail, authError },
-		{ headers: { 'Set-Cookie': await commitSession(cookie) } },
-	)
+	const cookie = new Cookie(request.headers.get('cookie') || '')
+	const totpCookie = cookie.get(TOTP_COOKIE_KEY)
+
+	if (totpCookie) {
+		const params = new URLSearchParams(totpCookie)
+		if (params.has('error')) return { error: params.get('error') }
+	}
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+	const clonedRequest = request.clone()
+	const formData = await clonedRequest.formData()
+	await validateCSRF(formData, clonedRequest.headers)
+	await checkHoneypot(formData)
+
+	// Authenticate the user via TOTP (Form submission).
+	await authenticator.authenticate('TOTP', request)
 }
 
 export default function LoginPage() {
-	const { authEmail, authError } = useLoaderData<typeof loader>()
+	const loaderData = useLoaderData<typeof loader>()
+	const serverError =
+		loaderData && 'error' in loaderData ? loaderData.error : undefined
+
 	const inputRef = useRef<HTMLInputElement>(null)
 	const isHydrated = useHydrated()
 	const isPending = useIsPending()
@@ -107,18 +106,12 @@ export default function LoginPage() {
 							<Input
 								placeholder="m@example.com"
 								ref={inputRef}
-								defaultValue={authEmail ? authEmail : ''}
 								required
 								{...getInputProps(email, { type: 'email' })}
 							/>
-							{!authError && email.errors && (
+							{(serverError || email?.errors) && (
 								<span className="text-destructive dark:text-destructive-foreground mb-2 text-sm">
-									{email.errors.join(' ')}
-								</span>
-							)}
-							{!authEmail && authError && (
-								<span className="text-destructive dark:text-destructive-foreground mb-2 text-sm">
-									{authError.message}
+									{serverError || email.errors?.[0]}
 								</span>
 							)}
 						</div>

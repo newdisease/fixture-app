@@ -5,7 +5,7 @@ import {
 } from 'react-router'
 
 import { TaskCard } from '~/components/task-card'
-import { authenticator } from '~/modules/auth/auth.server'
+import { getSessionUser } from '~/modules/auth/auth.server'
 import { siteConfig } from '~/utils/constants/brand'
 import { prisma } from '~/utils/db.server'
 
@@ -16,7 +16,7 @@ export const meta: MetaFunction = () => {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-	const sessionUser = await authenticator.isAuthenticated(request)
+	const sessionUser = await getSessionUser(request)
 	let user = null
 
 	if (sessionUser?.id) {

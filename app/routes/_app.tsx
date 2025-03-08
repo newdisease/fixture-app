@@ -3,11 +3,11 @@ import { type LoaderFunctionArgs, Outlet, useLoaderData } from 'react-router'
 import Footer from '~/components/footer'
 import { Header } from '~/components/header'
 
-import { authenticator } from '~/modules/auth/auth.server'
+import { getSessionUser } from '~/modules/auth/auth.server'
 import { prisma } from '~/utils/db.server'
 
 export async function loader({ request }: LoaderFunctionArgs) {
-	const sessionUser = await authenticator.isAuthenticated(request)
+	const sessionUser = await getSessionUser(request)
 	const user = sessionUser?.id
 		? await prisma.user.findUnique({
 				where: { id: sessionUser?.id },

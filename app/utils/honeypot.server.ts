@@ -9,9 +9,9 @@ export const honeypot = new Honeypot({
 		process.env.HONEYPOT_ENCRYPTION_SEED || 'NOT_A_STRONG_ENCRYPTION_SEED',
 })
 
-export function checkHoneypot(formData: FormData) {
+export async function checkHoneypot(formData: FormData) {
 	try {
-		honeypot.check(formData)
+		await honeypot.check(formData)
 	} catch (err: unknown) {
 		if (err instanceof SpamError) {
 			throw new Response('Form not submitted properly', { status: 400 })

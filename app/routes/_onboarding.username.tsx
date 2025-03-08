@@ -70,7 +70,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	const clonedRequest = request.clone()
 	const formData = await clonedRequest.formData()
 	await validateCSRF(formData, clonedRequest.headers)
-	checkHoneypot(formData)
+	await checkHoneypot(formData)
 
 	const submission = parseWithZod(formData, { schema: UsernameSchema })
 	if (submission.status !== 'success') {
