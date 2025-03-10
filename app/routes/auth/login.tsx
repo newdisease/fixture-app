@@ -3,19 +3,13 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { Cookie } from '@mjackson/headers'
 import { Loader2 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
-import {
-	type ActionFunctionArgs,
-	type LoaderFunctionArgs,
-	redirect,
-	Form,
-	type MetaFunction,
-	useLoaderData,
-} from 'react-router'
+import { redirect, Form, type MetaFunction } from 'react-router'
 
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { useHydrated } from 'remix-utils/use-hydrated'
 import { z } from 'zod'
+import { type Route } from './+types/login'
 import { MainLogo } from '~/components/misc/main-logo'
 import { ThemeSwitcherHome } from '~/components/misc/theme-switcher'
 import { Button } from '~/components/ui/button'
@@ -26,8 +20,8 @@ import {
 	getSessionUser,
 	TOTP_COOKIE_KEY,
 } from '~/modules/auth/auth.server'
-import { ROUTE_PATH as FEED_PATH } from '~/routes/_app.feed.tsx'
-import { ROUTE_PATH as AUTH_GOOGLE_PATH } from '~/routes/_auth.google'
+import { ROUTE_PATH as AUTH_GOOGLE_PATH } from '~/routes/auth/google'
+import { ROUTE_PATH as FEED_PATH } from '~/routes/feed'
 import { siteConfig } from '~/utils/constants/brand'
 import { validateCSRF } from '~/utils/csrf.server'
 import { checkHoneypot } from '~/utils/honeypot.server'
@@ -43,7 +37,7 @@ export const meta: MetaFunction = () => {
 	return [{ title: `Login | ${siteConfig.siteTitle}` }]
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
 	const sessionUser = await getSessionUser(request)
 	if (sessionUser) {
 		throw redirect(FEED_PATH)
@@ -58,7 +52,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	}
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
 	const clonedRequest = request.clone()
 	const formData = await clonedRequest.formData()
 	await validateCSRF(formData, clonedRequest.headers)
@@ -68,8 +62,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	await authenticator.authenticate('TOTP', request)
 }
 
-export default function LoginPage() {
-	const loaderData = useLoaderData<typeof loader>()
+export default function LoginPage({ loaderData }: Route.ComponentProps) {
 	const serverError =
 		loaderData && 'error' in loaderData ? loaderData.error : undefined
 

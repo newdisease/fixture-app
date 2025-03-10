@@ -1,8 +1,7 @@
-import { type LoaderFunctionArgs } from 'react-router'
-
+import { type Route } from './+types/user-images'
 import { prisma } from '~/utils/db.server'
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
 	if (!params.imageId) {
 		throw new Response('Image ID is required', { status: 400 })
 	}

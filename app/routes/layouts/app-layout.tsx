@@ -1,12 +1,13 @@
-import { type LoaderFunctionArgs, Outlet, useLoaderData } from 'react-router'
+import { Outlet, useRouteLoaderData } from 'react-router'
 
+import { type Route } from './+types/app-layout'
 import Footer from '~/components/footer'
 import { Header } from '~/components/header'
 
 import { getSessionUser } from '~/modules/auth/auth.server'
 import { prisma } from '~/utils/db.server'
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
 	const sessionUser = await getSessionUser(request)
 	const user = sessionUser?.id
 		? await prisma.user.findUnique({
@@ -20,8 +21,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	return { user }
 }
 
-export default function Dashboard() {
-	const { user } = useLoaderData<typeof loader>()
+export default function AppLayout({ loaderData }: Route.ComponentProps) {
+	const { user } = loaderData
 	return (
 		<>
 			<Header user={user} />
@@ -31,4 +32,15 @@ export default function Dashboard() {
 			<Footer />
 		</>
 	)
+}
+
+export const useUserLoaderData = () => {
+	const data = useRouteLoaderData<Route.ComponentProps['loaderData']>(
+		'routes/layouts/app-layout',
+	)
+	if (!data)
+		throw new Error(
+			'useRouteLoaderData must be used inside a route that is the child of "app-layout"',
+		)
+	return data
 }

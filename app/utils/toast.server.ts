@@ -3,9 +3,9 @@
  * Implementation based on github.com/epicweb-dev/epic-stack
  */
 import { redirect, createCookieSessionStorage } from 'react-router'
-import { z } from 'zod'
 
 import { combineHeaders } from './misc.server'
+import { ToastSchema, type ToastInput } from './toast'
 
 export const TOAST_SESSION_KEY = '_toast'
 export const TOAST_SESSION_FLASH_KEY = '_toast_flash'
@@ -20,16 +20,6 @@ export const toastSessionStorage = createCookieSessionStorage({
 		secure: process.env.NODE_ENV === 'production',
 	},
 })
-
-const ToastSchema = z.object({
-	description: z.string(),
-	id: z.string().default(() => Math.random().toString(36).substring(2, 9)),
-	title: z.string().optional(),
-	type: z.enum(['message', 'success', 'error']).default('message'),
-})
-
-export type Toast = z.infer<typeof ToastSchema>
-export type ToastInput = z.input<typeof ToastSchema>
 
 export async function getToastSession(request: Request) {
 	const session = await toastSessionStorage.getSession(

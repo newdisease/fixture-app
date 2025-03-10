@@ -1,5 +1,5 @@
-import { type Task, type Subscription, type User } from '@prisma/client'
 import { format } from 'date-fns'
+import { type Route } from '../routes/+types/feed'
 import { Button } from '~/components/ui/button'
 import {
 	Card,
@@ -11,10 +11,7 @@ import {
 } from '~/components/ui/card'
 
 export type TaskCardProps = {
-	task: Task & {
-		creator: Pick<User, 'fullName'>
-		subscriptions: Subscription[]
-	}
+	task: Route.ComponentProps['loaderData']['tasks'][number]
 	onComplete?: (id: string) => void
 }
 

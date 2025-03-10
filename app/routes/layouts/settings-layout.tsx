@@ -7,7 +7,7 @@ import { cn } from '~/utils/misc'
 export const ROUTE_PATH = '/settings/' as const
 
 export const meta: MetaFunction = () => {
-	return [{ title: `${siteConfig.siteTitle} | Settings` }]
+	return [{ title: `Settings | ${siteConfig.siteTitle}` }]
 }
 
 export default function Settings() {

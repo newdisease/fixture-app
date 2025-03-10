@@ -2,21 +2,14 @@ import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { Cookie } from '@mjackson/headers'
 import { useRef, useEffect } from 'react'
-import {
-	type MetaFunction,
-	type LoaderFunctionArgs,
-	type ActionFunctionArgs,
-	redirect,
-	Form,
-	useLoaderData,
-	useActionData,
-} from 'react-router'
+import { type MetaFunction, redirect, Form } from 'react-router'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { useHydrated } from 'remix-utils/use-hydrated'
 import { z } from 'zod'
-import { ROUTE_PATH as FEED_PATH } from './_app.feed'
-import { ROUTE_PATH as LOGIN_PATH } from './_auth.login'
+import { ROUTE_PATH as FEED_PATH } from '../feed'
+import { type Route } from './+types/verify-code'
+import { ROUTE_PATH as LOGIN_PATH } from './login'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 
@@ -40,7 +33,7 @@ export const meta: MetaFunction = () => {
 	return [{ title: `Verify code | ${siteConfig.siteTitle}` }]
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
 	const sessionUser = await getSessionUser(request)
 
 	if (sessionUser) {
@@ -77,7 +70,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	return { email }
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
 	const clonedRequest = request.clone()
 	const formData = await clonedRequest.formData()
 	await validateCSRF(formData, clonedRequest.headers)
@@ -98,9 +91,10 @@ export async function action({ request }: ActionFunctionArgs) {
 	}
 }
 
-export default function Verify() {
-	const loaderData = useLoaderData<typeof loader>()
-	const actionData = useActionData<typeof action>()
+export default function Verify({
+	loaderData,
+	actionData,
+}: Route.ComponentProps) {
 	const inputRef = useRef<HTMLInputElement>(null)
 	const isHydrated = useHydrated()
 
@@ -111,8 +105,6 @@ export default function Verify() {
 	const actionError =
 		actionData && 'error' in actionData ? actionData.error : null
 	const error = loaderError || actionError
-
-	console.log('error', error)
 
 	const [codeForm, { code }] = useForm({
 		constraint: getZodConstraint(VerifyLoginSchema),

@@ -1,6 +1,6 @@
-import { type User } from '@prisma/client'
 import { LogIn, Menu as MenuIcon } from 'lucide-react'
 import { Link, NavLink, useNavigate } from 'react-router'
+import { type Route } from '../routes/layouts/+types/app-layout'
 import { MainLogo } from './misc/main-logo'
 import { Button } from './ui/button'
 import {
@@ -12,8 +12,8 @@ import {
 } from './ui/sheet'
 import { UserMenu } from './user-menu'
 
-import { ROUTE_PATH as ADD_POST_PATH } from '~/routes/_app.add-new'
-import { ROUTE_PATH as FEED_PATH } from '~/routes/_app.feed'
+import { ROUTE_PATH as ADD_POST_PATH } from '~/routes/add-new'
+import { ROUTE_PATH as FEED_PATH } from '~/routes/feed'
 import { cn } from '~/utils/misc'
 
 const NAV_LINKS = [
@@ -22,7 +22,7 @@ const NAV_LINKS = [
 ]
 
 type HeaderProps = {
-	user: (User & { image: { id: string } | null }) | null
+	user: Route.ComponentProps['loaderData']['user']
 }
 
 function Header({ user }: HeaderProps) {
@@ -74,7 +74,7 @@ function Header({ user }: HeaderProps) {
 					{/* Right-side Actions: Theme Toggle, User Menu/Login, Mobile Menu */}
 					<div className="flex items-center space-x-2">
 						{user ? (
-							<UserMenu user={user} />
+							<UserMenu />
 						) : (
 							<Link to="/login">
 								<Button variant="ghost" size="icon">

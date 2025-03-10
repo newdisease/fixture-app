@@ -1,9 +1,9 @@
 import { type SubmissionResult } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
-import { type ActionFunctionArgs } from 'react-router'
 import sharp from 'sharp'
 import { z } from 'zod'
 
+import { type Route } from './+types/upload-image'
 import { requireUser } from '~/modules/auth/auth.server'
 import { prisma } from '~/utils/db.server'
 import { createToastHeaders } from '~/utils/toast.server'
@@ -15,19 +15,42 @@ export const MAX_THUMBNAIL_DIMENSION = 200 // Maximum width or height for the re
 export const ImageSchema = z.object({
 	imageFile: z
 		.instanceof(File)
-		.refine((file) => file.size > 0, 'Image is required.'),
+		.refine((file) => file.size > 0, 'Image is required.')
+		.refine(
+			(file) => file.size <= MAX_FILE_SIZE,
+			'Image size must be less than 3MB.',
+		),
 })
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
 	try {
 		const user = await requireUser(request)
 
-		const formData = new FormData()
+		const formData = await request.formData()
+
+		const imageFile = formData.get('imageFile') as File | null
+		if (imageFile && imageFile.size > MAX_FILE_SIZE) {
+			const result: SubmissionResult = {
+				initialValue: {},
+				status: 'error',
+				error: {
+					imageFile: ['Image size must be less than 3MB.'],
+				},
+				state: {
+					validated: {
+						imageFile: true,
+					},
+				},
+			}
+			return Response.json(result, { status: 400 })
+		}
+
 		const submission = await parseWithZod(formData, {
 			schema: ImageSchema.transform(async (data) => {
 				const arrayBuffer = await data.imageFile.arrayBuffer()
+				const buffer = Buffer.from(arrayBuffer)
 
-				const metadata = await sharp(arrayBuffer).metadata()
+				const metadata = await sharp(buffer).metadata()
 
 				if (!metadata.width || !metadata.height) {
 					throw new Error('Unable to retrieve image dimensions.')
@@ -36,11 +59,11 @@ export async function action({ request }: ActionFunctionArgs) {
 				let processedImageBuffer
 
 				if (metadata.width <= metadata.height) {
-					processedImageBuffer = await sharp(arrayBuffer)
+					processedImageBuffer = await sharp(buffer)
 						.resize({ width: MAX_THUMBNAIL_DIMENSION })
 						.toBuffer()
 				} else {
-					processedImageBuffer = await sharp(arrayBuffer)
+					processedImageBuffer = await sharp(buffer)
 						.resize({ height: MAX_THUMBNAIL_DIMENSION })
 						.toBuffer()
 				}
@@ -54,6 +77,7 @@ export async function action({ request }: ActionFunctionArgs) {
 			}),
 			async: true,
 		})
+
 		if (submission.status !== 'success') {
 			return Response.json(submission.reply(), {
 				status: submission.status === 'error' ? 400 : 200,
@@ -76,26 +100,25 @@ export async function action({ request }: ActionFunctionArgs) {
 			}),
 		})
 	} catch (error: unknown) {
-		if (
-			error instanceof Error &&
-			error.message === 'Image size must be less than 2MB.'
-		) {
-			const result: SubmissionResult = {
-				initialValue: {},
-				status: 'error',
-				error: {
-					imageFile: ['Image size must be less than 2MB.'],
-				},
-				state: {
-					validated: {
-						imageFile: true,
+		console.error('Error processing image:', error)
+
+		if (error instanceof Error) {
+			if (error.message.includes('dimensions')) {
+				const result: SubmissionResult = {
+					initialValue: {},
+					status: 'error',
+					error: {
+						imageFile: ['Invalid image format.'],
 					},
-				},
+					state: {
+						validated: {
+							imageFile: true,
+						},
+					},
+				}
+				return Response.json(result, { status: 400 })
 			}
-			return Response.json(result, { status: 400 })
-		} else {
-			console.error('Error processing image:', error)
-			throw error
 		}
+		throw error
 	}
 }

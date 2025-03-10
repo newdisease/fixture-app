@@ -2,31 +2,29 @@ import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { Upload } from 'lucide-react'
 import { useRef, useState } from 'react'
-import {
-	type ActionFunctionArgs,
-	type LoaderFunctionArgs,
-	Form,
-	redirect,
-	useActionData,
-	useFetcher,
-	useLoaderData,
-} from 'react-router'
+import { Form, redirect, useFetcher } from 'react-router'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 
-import { ROUTE_PATH as FEED_PATH } from './_app.feed'
+import { type Route } from './+types/settings'
+import { ROUTE_PATH as FEED_PATH } from './feed'
+import { useUserLoaderData } from './layouts/app-layout'
 import { UserAvatar } from '~/components/misc/user-avatar'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 
-import { destroySession, requireUser } from '~/modules/auth/auth.server'
-import { ROUTE_PATH as RESET_IMAGE_PATH } from '~/routes/resources.reset-image'
+import {
+	destroySession,
+	requireSessionUser,
+	requireUser,
+} from '~/modules/auth/auth.server'
+import { ROUTE_PATH as RESET_IMAGE_PATH } from '~/routes/resources/reset-image'
 import {
 	type action as uploadImageAction,
 	ROUTE_PATH as UPLOAD_IMAGE_PATH,
 	ImageSchema,
-} from '~/routes/resources.upload-image'
+} from '~/routes/resources/upload-image'
 import { INTENTS } from '~/utils/constants/misc'
 import { validateCSRF } from '~/utils/csrf.server'
 import { prisma } from '~/utils/db.server'
@@ -42,12 +40,11 @@ export const FullNameSchema = z.object({
 		.regex(/^[a-zA-Z\s]+$/, 'Name may only contain letters and spaces.'),
 })
 
-export async function loader({ request }: LoaderFunctionArgs) {
-	const user = await requireUser(request)
-	return { user }
+export async function loader({ request }: Route.LoaderArgs) {
+	await requireSessionUser(request)
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
 	const user = await requireUser(request)
 	const clonedRequest = request.clone()
 	const formData = await clonedRequest.formData()
@@ -91,9 +88,8 @@ export async function action({ request }: ActionFunctionArgs) {
 	throw new Error(`Invalid intent: ${intent}`)
 }
 
-export default function DashboardSettings() {
-	const { user } = useLoaderData<typeof loader>()
-	const lastResult = useActionData<typeof action>()
+export default function Settings() {
+	const { user } = useUserLoaderData()
 
 	const [imageSrc, setImageSrc] = useState<string | null>(null)
 	const imageFormRef = useRef<HTMLFormElement>(null)
@@ -103,7 +99,6 @@ export default function DashboardSettings() {
 	const { doubleCheck, getButtonProps } = useDoubleCheck()
 
 	const [form, { fullName }] = useForm({
-		lastResult,
 		constraint: getZodConstraint(FullNameSchema),
 		onValidate({ formData }) {
 			return parseWithZod(formData, { schema: FullNameSchema })
@@ -169,7 +164,7 @@ export default function DashboardSettings() {
 					<p className="text-primary/60 text-sm font-normal">
 						Click on the avatar to upload a custom one from your files.
 					</p>
-					{user.image?.id && !avatarFields.imageFile.errors ? (
+					{user?.image && !avatarFields.imageFile.errors ? (
 						<Button
 							type="button"
 							size="sm"

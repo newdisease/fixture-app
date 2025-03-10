@@ -4,11 +4,9 @@ import { Loader2 } from 'lucide-react'
 import { useRef, useEffect } from 'react'
 import {
 	type MetaFunction,
-	type LoaderFunctionArgs,
 	type ActionFunctionArgs,
 	redirect,
 	Form,
-	useActionData,
 	data,
 } from 'react-router'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
@@ -16,8 +14,9 @@ import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { useHydrated } from 'remix-utils/use-hydrated'
 import { z } from 'zod'
 
-import { ROUTE_PATH as FEED_PATH } from './_app.feed'
-import { ROUTE_PATH as LOGIN_PATH } from './_auth.login'
+import { ROUTE_PATH as LOGIN_PATH } from '../auth/login'
+import { ROUTE_PATH as FEED_PATH } from '../feed'
+import { type Route } from './+types/username'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { requireSessionUser } from '~/modules/auth/auth.server'
@@ -28,7 +27,7 @@ import { prisma } from '~/utils/db.server'
 import { checkHoneypot } from '~/utils/honeypot.server'
 import { useIsPending } from '~/utils/hooks/use-is-pending'
 
-export const ROUTE_PATH = '/username' as const
+export const ROUTE_PATH = '/onboarding/username' as const
 
 export const UsernameSchema = z.object({
 	username: z
@@ -44,10 +43,10 @@ export const UsernameSchema = z.object({
 })
 
 export const meta: MetaFunction = () => {
-	return [{ title: `${siteConfig.siteTitle} | Username` }]
+	return [{ title: `Set your username | ${siteConfig.siteTitle}` }]
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
 	const sessionUser = await requireSessionUser(request, {
 		redirectTo: LOGIN_PATH,
 	})
@@ -99,8 +98,10 @@ export async function action({ request }: ActionFunctionArgs) {
 	return redirect(FEED_PATH)
 }
 
-export default function OnboardingUsername() {
-	const lastResult = useActionData<typeof action>()
+export default function OnboardingUsername({
+	actionData,
+}: Route.ComponentProps) {
+	const lastResult = actionData
 	const inputRef = useRef<HTMLInputElement>(null)
 	const isHydrated = useHydrated()
 	const isPending = useIsPending()
@@ -166,7 +167,6 @@ export default function OnboardingUsername() {
 							)}
 						</div>
 					</div>
-
 					<Button type="submit" size="sm" className="w-full">
 						{isPending ? <Loader2 className="animate-spin" /> : 'Continue'}
 					</Button>
