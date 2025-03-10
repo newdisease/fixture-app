@@ -1,4 +1,3 @@
-import { type User } from '@prisma/client'
 import { LogOut, Settings } from 'lucide-react'
 import { useNavigate, useSubmit } from 'react-router'
 import { ThemeSwitcher } from './misc/theme-switcher'
@@ -11,19 +10,20 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from './ui/dropdown-menu'
-import { ROUTE_PATH as SETTINGS_PATH } from '~/routes/_app.settings'
-import { ROUTE_PATH as LOGOUT_PATH } from '~/routes/_auth.logout'
+import { ROUTE_PATH as LOGOUT_PATH } from '~/routes/auth/logout'
+import { useUserLoaderData } from '~/routes/layouts/app-layout'
+import { ROUTE_PATH as SETTINGS_PATH } from '~/routes/layouts/settings-layout'
 import { useRequestInfo } from '~/utils/hooks/use-request-info'
 import { cn } from '~/utils/misc'
 
 type UserMenuProps = {
-	user: User & { image: { id: string } | null }
 	className?: string
 }
-const UserMenu = ({ user, className }: UserMenuProps) => {
+const UserMenu = ({ className }: UserMenuProps) => {
 	const navigate = useNavigate()
 	const submit = useSubmit()
 	const requestInfo = useRequestInfo()
+	const { user } = useUserLoaderData()
 
 	return (
 		<div className={cn('flex h-10 items-center gap-3', className)}>
@@ -42,9 +42,9 @@ const UserMenu = ({ user, className }: UserMenuProps) => {
 				>
 					<DropdownMenuItem className="group flex-col items-start focus:bg-transparent">
 						<p className="text-primary/80 group-hover:text-primary group-focus:text-primary text-sm font-medium">
-							{user.fullName}
+							{user?.fullName}
 						</p>
-						<p className="text-primary/60 text-sm">@{user.username}</p>
+						<p className="text-primary/60 text-sm">@{user?.username}</p>
 					</DropdownMenuItem>
 					<DropdownMenuItem
 						className="group h-9 w-full cursor-pointer justify-between rounded-md px-2"

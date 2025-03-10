@@ -13,10 +13,8 @@ import { AuthenticityTokenProvider } from 'remix-utils/csrf/react'
 import { HoneypotProvider } from 'remix-utils/honeypot/react'
 
 import { Toaster } from './components/ui/sonner'
-import { getSessionUser } from './modules/auth/auth.server'
 import RootCSS from './root.css?url'
 import { csrf } from './utils/csrf.server'
-import { prisma } from './utils/db.server'
 import { honeypot } from './utils/honeypot.server'
 import { useToast } from './utils/hooks/use-toast'
 import { getToastSession } from './utils/toast.server'
@@ -42,23 +40,12 @@ export const links: LinksFunction = () => [
 ]
 
 export async function loader({ request }: LoaderFunctionArgs) {
-	const sessionUser = await getSessionUser(request)
-	const user = sessionUser?.id
-		? await prisma.user.findUnique({
-				where: { id: sessionUser?.id },
-				include: {
-					image: { select: { id: true } },
-				},
-			})
-		: null
-
 	const { toast, headers: toastHeaders } = await getToastSession(request)
 	const [csrfToken, csrfCookieHeader] = await csrf.commitToken()
 	const honeypotProps = await honeypot.getInputProps()
 
 	return data(
 		{
-			user,
 			toast,
 			csrfToken,
 			honeypotProps,

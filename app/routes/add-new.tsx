@@ -10,12 +10,12 @@ import {
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
-import { ROUTE_PATH as FEED_PATH } from './_app.feed'
+import { ROUTE_PATH as FEED_PATH } from './feed'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Textarea } from '~/components/ui/textarea'
 
-import { requireUser } from '~/modules/auth/auth.server'
+import { requireSessionUser } from '~/modules/auth/auth.server'
 import { siteConfig } from '~/utils/constants/brand'
 import { INTENTS } from '~/utils/constants/misc'
 import { validateCSRF } from '~/utils/csrf.server'
@@ -35,12 +35,11 @@ export const meta: MetaFunction = () => {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-	const user = await requireUser(request)
-	return { user }
+	await requireSessionUser(request)
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-	const user = await requireUser(request)
+	const sessionUser = await requireSessionUser(request)
 	const clonedRequest = request.clone()
 	const formData = await clonedRequest.formData()
 	await validateCSRF(formData, clonedRequest.headers)
@@ -59,7 +58,7 @@ export async function action({ request }: ActionFunctionArgs) {
 				title,
 				description,
 				deadline,
-				creatorId: user.id,
+				creatorId: sessionUser.id,
 			},
 		})
 

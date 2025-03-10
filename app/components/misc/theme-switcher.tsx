@@ -7,7 +7,7 @@ import {
 	SelectItem,
 	SelectTrigger,
 } from '~/components/ui/select'
-import { ROUTE_PATH as THEME_PATH } from '~/routes/resources.update-theme'
+import { ROUTE_PATH as THEME_PATH } from '~/routes/resources/update-theme'
 import {
 	useOptimisticThemeMode,
 	type Theme,
