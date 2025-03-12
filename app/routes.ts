@@ -18,6 +18,7 @@ export default [
 	layout('./routes/layouts/app-layout.tsx', [
 		route('feed', './routes/feed.tsx'),
 		route('add-new', './routes/add-new.tsx'),
+		route('users', './routes/users.tsx'),
 		layout('./routes/layouts/settings-layout.tsx', [
 			route('settings', './routes/settings.tsx'),
 		]),
