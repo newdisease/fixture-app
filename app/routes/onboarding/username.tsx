@@ -19,6 +19,7 @@ import { ROUTE_PATH as FEED_PATH } from '../feed'
 import { type Route } from './+types/username'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
+import { Label } from '~/components/ui/label'
 import { requireSessionUser } from '~/modules/auth/auth.server'
 import { siteConfig } from '~/utils/constants/brand'
 import { ERRORS } from '~/utils/constants/errors'
@@ -114,6 +115,8 @@ export default function OnboardingUsername({
 		},
 	})
 
+	const usernameInputProps = getInputProps(username, { type: 'text' })
+
 	useEffect(() => {
 		isHydrated && inputRef.current?.focus()
 	}, [isHydrated])
@@ -145,19 +148,13 @@ export default function OnboardingUsername({
 					<HoneypotInputs />
 
 					<div className="flex w-full flex-col">
-						<label htmlFor="username" className="sr-only">
-							Username
-						</label>
+						<Label htmlFor={usernameInputProps.id}>Username</Label>
 						<Input
 							placeholder="Username"
 							autoComplete="off"
 							ref={inputRef}
 							required
-							className={`bg-transparent ${
-								username.errors &&
-								'border-destructive focus-visible:ring-destructive'
-							}`}
-							{...getInputProps(username, { type: 'text' })}
+							{...usernameInputProps}
 						/>
 						<div className="h-6">
 							{username.errors && (
