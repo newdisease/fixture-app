@@ -11,6 +11,7 @@ import { ROUTE_PATH as FEED_PATH } from '../feed'
 import { type Route } from './+types/verify-code'
 import { ROUTE_PATH as LOGIN_PATH } from './login'
 import { Button } from '~/components/ui/button'
+import { ErrorMessage } from '~/components/ui/error-message'
 import { Input } from '~/components/ui/input'
 
 import {
@@ -155,9 +156,7 @@ export default function Verify({
 
 				<div className="flex flex-col">
 					{(error || code.errors) && (
-						<span className="text-destructive dark:text-destructive-foreground mb-2 text-sm">
-							{error || code.errors?.join(' ')}
-						</span>
+						<ErrorMessage>{error || code.errors?.join(' ')}</ErrorMessage>
 					)}
 				</div>
 				<Button type="submit" className="w-full" disabled={isPending}>

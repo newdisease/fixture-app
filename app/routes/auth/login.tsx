@@ -3,7 +3,7 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { Cookie } from '@mjackson/headers'
 import { Loader2 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
-import { redirect, Form, type MetaFunction } from 'react-router'
+import { redirect, Form, type MetaFunction, Link } from 'react-router'
 
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
@@ -13,6 +13,7 @@ import { type Route } from './+types/login'
 import { MainLogo } from '~/components/misc/main-logo'
 import { ThemeSwitcherHome } from '~/components/misc/theme-switcher'
 import { Button } from '~/components/ui/button'
+import { ErrorMessage } from '~/components/ui/error-message'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import {
@@ -77,6 +78,8 @@ export default function LoginPage({ loaderData }: Route.ComponentProps) {
 		},
 	})
 
+	const emailInputProps = getInputProps(email, { type: 'email' })
+
 	useEffect(() => {
 		isHydrated && inputRef.current?.focus()
 	}, [isHydrated])
@@ -85,9 +88,9 @@ export default function LoginPage({ loaderData }: Route.ComponentProps) {
 		<div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
 			<div className="w-full max-w-sm">
 				<div className="flex flex-col gap-6">
-					<a href="/" className="flex flex-col items-center font-medium">
+					<Link to="/" className="flex flex-col items-center font-medium">
 						<MainLogo />
-					</a>
+					</Link>
 					<Form
 						method="POST"
 						autoComplete="off"
@@ -95,17 +98,15 @@ export default function LoginPage({ loaderData }: Route.ComponentProps) {
 						{...getFormProps(emailForm)}
 					>
 						<div className="grid gap-2">
-							<Label htmlFor="email">Email</Label>
+							<Label htmlFor={emailInputProps.id}>Email</Label>
 							<Input
 								placeholder="m@example.com"
 								ref={inputRef}
 								required
-								{...getInputProps(email, { type: 'email' })}
+								{...emailInputProps}
 							/>
 							{(serverError || email?.errors) && (
-								<span className="text-destructive dark:text-destructive-foreground mb-2 text-sm">
-									{serverError || email.errors?.[0]}
-								</span>
+								<ErrorMessage>{serverError || email.errors?.[0]}</ErrorMessage>
 							)}
 						</div>
 						<Button type="submit" className="w-full" disabled={isPending}>
